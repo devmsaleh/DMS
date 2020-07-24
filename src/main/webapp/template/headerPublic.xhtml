@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <body>
+	    <ui:composition>
+
+        <p:cache region="headerRegion" key="header">
+		<div class="landing-header">
+                <div class="landing-header-content clearfix">
+                    <p:graphicImage cache="true" name="images/logo.png" library="omega-layout" width="113"/>
+                    
+                    <a id="menu-button" href="#">
+                        <span class="fa fa-bars"></span>
+                    </a>
+                    <ul id="menu">
+                        <li><a href="login">تسجيل الدخول</a></li>                      
+                        <li><a href="findInvoiceStatus">تتبع شحنتك</a></li>                        
+                        <li><a href="contactUs">اتصل بنا</a></li>
+                        <li><a href="#">من نحن</a></li>
+                        <li><a href="#{request.contextPath}/">الرئيسية</a></li>
+                    </ul>
+                </div>
+         </div>
+         </p:cache>
+
+	    </ui:composition>
+    </body>
+</html>

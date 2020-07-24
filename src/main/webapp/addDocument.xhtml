@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+        <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
+		<h:outputScript target="head">
+			$ = jQuery;
+		</h:outputScript> 
+        <link href="#{request.contextPath}/resources/js/calendar/jquery.calendars.picker.css" rel="stylesheet" />	
+		<script src="#{request.contextPath}/resources/js/calendar/jquery.calendars.js"></script>
+        <script src="#{request.contextPath}/resources/js/calendar/jquery.calendars.plus.js"></script>
+        <script src="#{request.contextPath}/resources/js/calendar/jquery.calendars.picker.js"></script>
+		<script src="#{request.contextPath}/resources/js/calendar/jquery.calendars.ummalqura.js"></script>
+		<script src="#{request.contextPath}/resources/js/calendar/jquery.calendars.ummalqura-ar.js"></script>
+    </ui:define>
+    <ui:define name="title">إدخال الملفات</ui:define>
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <h:form id="form" enctype="multipart/form-data">
+                <p:growl autoUpdate="true" id="messages" showDetail="false" escape="false"/>
+                
+                  <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+	                  <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
+		                    <p:outputLabel value="اسم التصنيف"/>
+		                    <p:selectOneMenu id="documentClassesList" value="#{addDocumentBean.selectedDocumentClassId}">
+									<f:selectItems value="#{addDocumentBean.documentClassesList}" var="documentClass"
+									itemLabel="#{documentClass.displayNameArabic}" itemValue="#{documentClass.id}" />									
+						    <p:ajax listener="#{addDocumentBean.documentClassChanged}" update="propertiesTable" onstart="PF('loadingDialogWidget').show();" 
+			                   oncomplete="submitCallback(xhr, status, args);"/>
+						    </p:selectOneMenu> 
+					  </p:panelGrid>
+						    
+	                  <p:panelGrid id="propertiesTable" columns="2" columnClasses="inputsColumnAdd,uploadFileColumn" styleClass="ui-panelgrid-blank">
+	                     <h:panelGrid id="inputs" columns="2" binding="#{addDocumentBean.propertiesPanelGrid}"></h:panelGrid>
+	                     <p:panelGrid columns="1" styleClass="ui-panelgrid-blank ui-g-5">
+	                         <p:fileUpload id="fileUpload"  uploadLabel=""  cancelLabel="" label="اختر الملف"  
+						       onstart="PF('loadingDialogWidget').show();" 
+						       oncomplete="PF('loadingDialogWidget').hide();"
+						       mode="advanced" auto="true" multiple="false"  immediate="true" 
+	                           fileUploadListener="#{addDocumentBean.handleFileUpload}"
+	                             update="filesTable" />
+	                          <h:panelGroup layout="block" id="filesTable">
+	                               <p:dataTable var="file" value="#{addDocumentBean.filesList}">
+									    <p:column headerText="اسم الملف">
+									        <h:outputText value="#{file.originalFileName}" />
+									    </p:column>									 
+								  </p:dataTable>
+	                          </h:panelGroup>   
+	                     </p:panelGrid>
+	                  </p:panelGrid>
+	                  
+	                  <p:commandButton					   
+							   value="حفظ الوثيقة"  style="margin-top:10px;"
+							   action="#{addDocumentBean.createNewDocument}"
+							   update="propertiesTable" 
+							   onstart="PF('loadingDialogWidget').show();" 
+			                   oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){}" >					  
+					  </p:commandButton>
+                  </p:panelGrid>
+                
+                </h:form>
+                <p:outputPanel autoUpdate="true">
+					<h:outputScript id="applyChangeHandler">
+						$(function() {						                
+			              $('.hijriDate').calendarsPicker({calendar: $.calendars.instance('ummalqura','ar'),maxDate: 0,dateFormat:'yyyy/mm/dd'});
+						  $('.gregDate').calendarsPicker({calendar2: $.calendars.instance(),maxDate: 0,dateFormat:'yyyy/mm/dd'});
+		                });
+						$('.hijriDate').keydown(function(e) {
+		                   e.preventDefault();
+		                   return false;
+		                });
+						
+						$('.gregDate').keydown(function(e) {
+		                   e.preventDefault();
+		                   return false;
+		                });
+					</h:outputScript>
+		        </p:outputPanel>
+            </div>
+        </div>
+        
+    </ui:define>
+
+</ui:composition>

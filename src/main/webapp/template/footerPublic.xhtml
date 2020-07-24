@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <body>
+	    <ui:composition>
+
+        <p:cache region="footerRegion" key="footer">
+		<div class="landing-footer">
+                <div class="landing-footer-content">
+                    <div class="footer-top">
+                       <div class="ui-g">
+                        <div class="ui-g-12 ui-md-4">
+                            <p:graphicImage cache="true" name="images/logo-footer.jpg" library="omega-layout" />
+                            <div>
+                                <p>دليل شركات الشحن</p>    
+                            </div>
+                        </div>
+                        
+                        <div class="ui-g-12 ui-md-4">
+                            <h4>اتصل بنا</h4>
+                            <p>المملكة العربية السعودية - الرياض </p>
+                            <p><i class="fa fa-mobile-phone"></i></p>    
+                        </div>
+                        
+                        <div class="ui-g-12 ui-md-4 footer-social">
+                            <h4>شبكات التواصل</h4>
+                            <h:outputLink  value="http://www.facebook.com/talqah/" style="color:white;text-decoration:none;font-size:30px">
+							    <i class="fa fa-facebook-square"></i>
+							</h:outputLink>
+                            <h:outputLink  value="http://twitter.com/Talqah1" style="color:white;text-decoration:none;font-size:30px">
+							    <i class="fa fa-twitter"></i>
+							</h:outputLink>
+                            <h:outputLink  value="http://www.instagram.com/talqah/" style="color:white;text-decoration:none;font-size:30px">
+							    <i class="fa fa-instagram"></i>
+							</h:outputLink>
+                        </div>
+                    </div> 
+                    </div>
+                    
+
+                </div>
+        </div>
+            
+        
+        <h:outputStylesheet name="css/layout.css" library="omega-layout" />
+        <p:dialog modal="true" widgetVar="loadingDialogWidget" header="" draggable="false" closable="false" resizable="false">
+			<p:graphicImage value="resources/images/ajaxloadingbar.gif" />
+		</p:dialog>		
+		</p:cache>
+
+	    </ui:composition>
+    </body>
+</html>

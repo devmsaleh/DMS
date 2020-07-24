@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+         <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/images/favicon.ico" />
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>استعراض الوثيقة</title>
+    </h:head>
+
+    <h:body>
+    
+       
+		<script src="#{request.contextPath}/resources/openseadragon/openseadragon.min.js"></script>
+		
+		<div id="tilesource-collection" style="width: 800px; height: 600px;"></div>
+		<script type="text/javascript">
+		//<![CDATA[
+		    var images = {
+		        "77653384-9548-b9d6-e445-5861445d5dd2":{"tileurl":"/dms/resources/images/1.jpg"},
+		        "2724259a-6dca-8f5f-4e5d-d253d44a303c":{"tileurl":"/dms/resources/images/2.jpg"}
+		    };
+		    
+		    var urls = #{viewerBean.filesListAsJson}
+		    
+		    var tileSources = urls.map(function(url) {
+		        return {
+		          url: url,
+		          type: 'image'
+		        };
+		    });
+		
+		
+		    var viewer = OpenSeadragon({
+		        id: "tilesource-collection",
+		        prefixUrl: "/dms/resources/openseadragon/images/",
+		        sequenceMode: true,
+		        tileSources: tileSources
+		    });
+		    
+		    viewer.addHandler('open', function() {
+		    	  var tiledImage = viewer.world.getItemAt(0); // Assuming you just have a single image in the viewer
+		    	  var targetZoom = tiledImage.source.dimensions.x / viewer.viewport.getContainerSize().x;
+		    	  viewer.viewport.zoomTo(targetZoom, null, true);
+		    	});
+		
+		
+		//]]>
+		</script>
+        
+        
+        
+    </h:body>
+
+</html>

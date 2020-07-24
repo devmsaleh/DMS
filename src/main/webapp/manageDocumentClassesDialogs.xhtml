@@ -1,0 +1,89 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+    
+	
+		
+		<p:dialog modal="true" dynamic="true" id="addNewClassDialog" widgetVar="addNewClassDialogWidget" 
+		closable="true" header="إنشاء تصنيف جديد" 
+		resizable="false" width="600" height="250" position="center top" style="margin-top:100px;"    
+		dir="rtl" closeOnEscape="true">
+			  
+			 <h:panelGrid columns="2">
+				  				  
+				  <p:outputLabel value="الإسم العربي" styleClass="requiredLabel"/>
+				  <p:inputText value="#{manageDocumentClassesBean.newDocumentClass.displayNameArabic}" 
+				  required="true"
+				  requiredMessage="الإسم العربي مطلوب"
+				  style="width:275px;"/>
+				  
+				  <p:outputLabel value="الإسم الإنجليزي" styleClass="notRequiredLabel"/>
+				  <p:inputText  value="#{manageDocumentClassesBean.newDocumentClass.displayNameEnglish}" style="width:275px;"/>
+				  
+				  <p:outputLabel value="إخفاء" styleClass="notRequiredLabel"/>
+				  <p:selectBooleanCheckbox  value="#{manageDocumentClassesBean.newDocumentClass.hidden}" />
+			  
+			  </h:panelGrid>
+			  
+			  <p:commandButton 
+			  value="إنشاء تصنيف جديد" action="#{manageDocumentClassesBean.createNewDocumentClass}" styleClass="buttonClass" 			  
+			  onstart="PF('loadingDialogWidget').show();" 
+			  oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){PF('addNewClassDialogWidget').hide();}" 
+			  update=":form:tabs:documentClassesList :form:tabs:propertiesTable"> 
+			  </p:commandButton>
+			  					  
+        </p:dialog>
+        
+        <p:dialog modal="true" dynamic="true" id="addNewPropertyDialog" widgetVar="addNewPropertyDialogWidget" 
+		closable="true" header="انشاء خاصية جديدة" 
+		resizable="false" width="600" height="250" position="center top" style="margin-top:100px;"   
+		dir="rtl" closeOnEscape="true">
+			  
+			 <p:importEnum type="com.dms.enums.PropertyTypeEnum" var="propertyTypeEnum" allSuffix="ALL_ENUM_VALUES" /> 
+			 <h:panelGrid id="addNewPropertyTable" columns="2">
+				  				  
+				  <p:outputLabel value="الإسم العربي" styleClass="requiredLabel"/>
+				  <p:inputText id="newPropertyDisplayNameArabic" value="#{manageDocumentClassesBean.newProperty.displayNameArabic}" 
+				  required="true"
+				  requiredMessage="الإسم العربي مطلوب"
+				  style="width:275px;"/>
+				  
+				  <p:outputLabel value="الإسم الإنجليزي" styleClass="notRequiredLabel"/>
+				  <p:inputText id="newPropertyDisplayNameEnglish" value="#{manageDocumentClassesBean.newProperty.displayNameEnglish}" style="width:275px;"/>
+				  
+				  
+				  <p:outputLabel value="النوع" styleClass="notRequiredLabel"/>
+				  <p:selectOneMenu value="#{manageDocumentClassesBean.newProperty.type}">
+								<f:selectItems value="#{propertyTypeEnum.ALL_ENUM_VALUES}" var="enumVar"
+								itemLabel="#{manageDocumentClassesBean.getPropertyTypeLabel(enumVar.value)}" itemValue="#{enumVar.value}" />									
+				  <p:ajax process="@this newPropertyDisplayNameArabic newPropertyDisplayNameEnglish" update="addNewPropertyTable"/>
+				  </p:selectOneMenu>
+				  
+				  <p:outputLabel value="القوائم الحالية" rendered="#{manageDocumentClassesBean.newProperty.type == manageDocumentClassesBean.PROPERTY_TYPE_CHOICELIST}"/>
+                  <p:selectOneMenu value="#{manageDocumentClassesBean.propertyChoiceListId}" rendered="#{manageDocumentClassesBean.newProperty.type == manageDocumentClassesBean.PROPERTY_TYPE_CHOICELIST}">
+						<f:selectItems value="#{manageDocumentClassesBean.choiceLists}" var="choiceList"
+						itemLabel="#{choiceList.displayNameArabic}" itemValue="#{choiceList.id}" />									
+			      </p:selectOneMenu> 
+					    
+				  <p:outputLabel value="اجباري" styleClass="notRequiredLabel"/>
+				  <p:selectBooleanCheckbox  value="#{manageDocumentClassesBean.newProperty.required}" />
+			  
+			  </h:panelGrid>
+			  
+			  <p:commandButton 
+			  value="إضافة" action="#{manageDocumentClassesBean.createNewProperty}" 			  
+			  onstart="PF('loadingDialogWidget').show();" 
+			  oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){PF('addNewPropertyDialogWidget').hide();}" 
+			  update="addNewPropertyDialog :form:tabs:propertiesTable"> 
+			  </p:commandButton>
+			  					  
+        </p:dialog>
+        
+        
+	
+
+</ui:composition>

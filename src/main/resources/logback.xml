@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+<property name="logPattern" value="%d %-5level %logger{35} - %msg%n"/>
+<property name="logEncoding" value="UTF-8"/>
+<property name="logDirectory" value="C:\\SHIPPING_LOG"/>
+
+<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <charset>${logEncoding}</charset>
+      <pattern>${logPattern}</pattern>
+    </encoder>
+</appender>
+  
+<appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logDirectory}/dawam.log</file>
+    
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">              
+        <fileNamePattern>${logDirectory}/shipping.%d{yyyy-MM-dd}.log</fileNamePattern>
+        <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    
+    <!--  
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <fileNamePattern>${logDirectory}/dawam_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <maxFileSize>10MB</maxFileSize>
+        </timeBasedFileNamingAndTriggeringPolicy>
+        <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    -->
+    
+    <encoder>
+        <charset>${logEncoding}</charset>
+        <pattern>${logPattern}</pattern>
+    </encoder>
+</appender>
+
+<logger name="org.springframework.security" level="ERROR"/>
+<logger name="org.primefaces" level="ERROR"/>
+<logger name="com.ocpsoft" level="ERROR"/>
+<!-- Log JDBC bind parameter runtime arguments -->
+<logger name="org.hibernate.type" level="ERROR"/>
+
+<root level="INFO">
+    <appender-ref ref="fileAppender"/>
+    <appender-ref ref="STDOUT" />
+</root>
+
+</configuration>

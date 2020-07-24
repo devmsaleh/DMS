@@ -1,0 +1,127 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+ 
+    <ui:define name="title">إدارة التصنيفات</ui:define>
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <h:form id="form">
+                <p:growl autoUpdate="true" id="messages" showDetail="false" escape="false"/>
+                
+                
+                <p:tabView id="tabs" dynamic="true" cache="true">
+                  <p:tab title="التصنيفات">
+                    <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+                    
+	                    <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
+		                    <p:outputLabel value="التصنيفات الحالية"/>
+		                    <p:selectOneMenu id="documentClassesList" value="#{manageDocumentClassesBean.selectedDocumentClassId}">
+									<f:selectItems value="#{manageDocumentClassesBean.documentClassesList}" var="documentClass"
+									itemLabel="#{documentClass.displayNameArabic}" itemValue="#{documentClass.id}" />									
+						    <p:ajax listener="#{manageDocumentClassesBean.documentClassChanged}" update="propertiesTable" onstart="PF('loadingDialogWidget').show();" 
+			                   oncomplete="submitCallback(xhr, status, args);"/>
+						    </p:selectOneMenu> 
+					    </p:panelGrid>
+					    
+					    
+					    <p:dataTable id="propertiesTable" var="property" value="#{manageDocumentClassesBean.selectedDocumentClass.propertiesList}">
+						    
+						    <p:column headerText="اسم الخاصية">
+						        <p:outputLabel value="#{property.displayNameArabic}" styleClass="#{property.required ? 'requiredLabel' : 'notRequiredLabel'}"/>
+						    </p:column>
+						 
+						    <p:column headerText="نوع الخاصية">
+						        <p:outputLabel value="#{manageDocumentClassesBean.getPropertyTypeLabel(property.type)}" />
+						    </p:column>
+						    
+						    <p:column headerText="اسم العمود">
+						        <p:outputLabel value="#{property.columnName}" />
+						    </p:column>
+						 
+						</p:dataTable>
+					    
+					    <p:commandButton type="button"					   
+							   value="إنشاء تصنيف جديد"  style="margin-top:10px;"							    
+							   onclick="PF('addNewClassDialogWidget').show();" >					  
+						</p:commandButton> 
+						
+						<p:commandButton type="button"					   
+							   value="انشاء خاصية جديدة"  style="margin-top:10px;" 
+							   onclick="PF('addNewPropertyDialogWidget').show();" >					  
+						</p:commandButton>
+					
+					</p:panelGrid>
+					
+                  </p:tab>
+                  <p:tab title="القوائم">
+                  
+                    <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+                    
+                        <p:panel styleClass="card">                  
+		                    <h1>انشاء قائمة</h1>
+		                    <p:panelGrid columns="3" styleClass="ui-panelgrid-blank">
+		                        <p:outputLabel value="اسم القائمة"/>
+		                        <p:inputText id="newChoiceListName" value="#{manageDocumentClassesBean.newChoiceList.displayNameArabic}"/>
+		                        <p:commandButton 
+								  value="إضافة" action="#{manageDocumentClassesBean.createNewChoiceList}" 			  
+								  onstart="PF('loadingDialogWidget').show();" 
+								  oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){}" 
+								  update=":form:tabs:choiceLists :form:tabs:choiceListItemsPanel :form:tabs:newChoiceListName"> 
+								 </p:commandButton>
+		                        
+			                    <p:outputLabel value="القوائم الحالية"/>
+			                    <p:selectOneMenu id="choiceLists" value="#{manageDocumentClassesBean.selectedChoiceListId}">
+										<f:selectItems value="#{manageDocumentClassesBean.choiceLists}" var="choiceList"
+										itemLabel="#{choiceList.displayNameArabic}" itemValue="#{choiceList.id}" />									
+							    <p:ajax listener="#{manageDocumentClassesBean.choiceListChanged}" update="choiceListItemsPanel"/>
+							    </p:selectOneMenu> 
+						    </p:panelGrid>                   
+		                </p:panel>
+	                    
+					    
+					    <p:panel id="choiceListItemsPanel" styleClass="card">                  
+			                <h1>
+			                  <h:outputText rendered="#{manageDocumentClassesBean.selectedChoiceList == null}" value="اضافة عناصر القائمة"/>
+			                  <h:outputText rendered="#{manageDocumentClassesBean.selectedChoiceList != null}" value="اضافة عناصر لقائمة : #{manageDocumentClassesBean.selectedChoiceList.displayNameArabic}" />
+			                </h1>
+						    <p:panelGrid columns="3" styleClass="ui-panelgrid-blank">
+		                        <p:outputLabel value="اسم العنصر"/>
+		                        <p:inputText id="newItemName" value="#{manageDocumentClassesBean.newItemName}"/>
+		                        <p:commandButton 
+								  value="إضافة" action="#{manageDocumentClassesBean.createNewItem}" 			  
+								  onstart="PF('loadingDialogWidget').show();" 
+								  oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){}" 
+								  update=":form:tabs:choiceListItemsTable :form:tabs:newItemName"> 
+								 </p:commandButton>
+							</p:panelGrid>
+						    <p:dataTable styleClass="ui-g-5" id="choiceListItemsTable" var="item" value="#{manageDocumentClassesBean.selectedChoiceList.itemsList}">
+							    
+							    <p:column headerText="اسم العنصر">
+							        <p:outputLabel value="#{item.value}" />
+							    </p:column>						 
+							 
+							</p:dataTable>
+						</p:panel>
+					    					
+					</p:panelGrid>
+					
+                  </p:tab>
+                </p:tabView>
+                
+                	
+                <h:panelGroup id="dialogesDiv" layout="block">		
+				   <ui:include src="manageDocumentClassesDialogs.xhtml" /> 
+		        </h:panelGroup>
+		        	
+                </h:form>
+            </div>
+        </div>
+        
+    </ui:define>
+
+</ui:composition>

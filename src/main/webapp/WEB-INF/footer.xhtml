@@ -1,0 +1,47 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    
+    <h:form id="footerForm">
+    <div class="footer">
+        <div class="ui-g footer-content" style="height:150px;">
+                        
+        </div>
+        
+        
+    <p:dialog modal="true" widgetVar="loadingDialogWidget" header="" draggable="false" closable="false" resizable="false">
+		    <p:graphicImage value="resources/images/ajaxloadingbar.gif" />
+	</p:dialog>
+	
+	<p:dialog id="serverErrorDialog" widgetVar="serverErrorDialogWidget"
+				position="center top" style="margin-top:100px;text-align:center"
+				styleClass="successDialog" dir="rtl" width="410" height="110"
+				modal="true" showHeader="false" resizable="false" draggable="false">
+				<h:panelGrid columns="1"
+					 style="margin:0 auto;height: 50%;font-weight: bold;">
+					<h:outputText
+							value="حدث خطأ فى النظام...من فضلك حاول مرة أخرى لاحقا...واذا استمرت المشكلة برجاء التواصل مع الدعم الفني"
+							style="color:red" />
+					<p:commandButton value="إغلاق" type="button" onclick="PF('serverErrorDialogWidget').hide();"/>		
+				</h:panelGrid>
+	</p:dialog>
+	
+	<p:dialog id="successDialog" widgetVar="successDialogWidget"
+				position="center top" style="margin-top:100px;text-align:center"
+				dir="rtl" width="380" height="110"
+				resizable="false" modal="true" showHeader="false" draggable="false">
+				<h:panelGrid  columns="1"
+					style="margin:0 auto;font-weight: bold;margin-top:15px;">
+					<h:outputText
+							value="تمت العملية بنجاح"
+							style="color:green" />
+					<p:commandButton value="إغلاق" type="button" onclick="PF('successDialogWidget').hide();"/>		
+				</h:panelGrid>
+	</p:dialog>
+	    
+    </div>
+    </h:form>
+</ui:composition>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"  
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:view locale="#{localeBean.locale}">
+
+    <h:head>
+	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    
+	   <h:outputStylesheet name="bootstrap-rtl.css" library="css" media="screen" rendered="#{localeBean.language eq 'ar'}" />
+		<f:facet name="middle">
+    		   <link target="head" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+    	</f:facet>   
+	   
+	   <h:outputStylesheet name="common.css" library="css" media="screen"/>
+	   <h:outputScript  name="location.js" library="js"/>
+	   		<h:outputStylesheet name="calender/jquery.calendars.picker.css" library="css" media="screen"/>
+			   
+	   <h:outputScript  name="calender/jquery.plugin.js" library="js"/>
+	   <h:outputScript  name="calender/jquery.calendars.js" library="js"/>
+	   <h:outputScript  name="calender/jquery.calendars.plus.js" library="js"/>
+	   <h:outputScript  name="calender/jquery.calendars.picker.js" library="js"/>
+	   <h:outputScript  name="calender/jquery.calendars.ummalqura.js" library="js"/>
+	   <h:outputScript  name="calender/jquery.calendars.ummalqura-ar.js" library="js"/>
+	   <h:outputScript  name="calender/jquery.calendars.picker-ar.js" library="js"/>
+	   
+	   <script src="https://maps.googleapis.com/maps/api/js?libraries=places&amp;key=AIzaSyBKacT9AzjdIx2l-A3qD-ct0G60zmS9EN8&amp;language=#{localeBean.language}"></script>
+	   
+		
+		<link rel="shortcut icon" type="image/png" href="#{request.contextPath}/faces/javax.faces.resource/images/favicon.png"/>
+		
+		
+		<script>
+
+			PrimeFaces.locales ['ar'] = { closeText: 'إغلق', prevText: 'إلى الخلف', nextText: 'إلى الأمام', currentText: 'بداية', monthNames: ['يناير','فبراير' ,'مارس','ابريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'], monthNamesShort: ['يناير','فبراير' ,'مارس','ابريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'], dayNames: ['يوم الأحد‎', 'يوم الإثنين‎', 'يوم الثلاثاء‎', '‏يوم الأَرْبعاء‎', '‏يوم الخَمِيس‎', 'يوم الجُمْعَة‎‎', 'يوم السَّبْت'], dayNamesShort: ['الأحد‎', 'الإثنين‎', 'الثلاثاء‎', 'الأَرْبعاء‎', 'الخَمِيس‎', 'الجُمْعَة‎‎', 'السَّبْت'], dayNamesMin: ['الأحد‎', 'الإثنين‎', 'الثلاثاء‎', 'الأَرْبعاء‎', 'الخَمِيس‎', 'الجُمْعَة‎‎', 'السَّبْت'], weekHeader: 'الأسبوع', firstDay: 6, isRTL: true, showMonthAfterYear: false, yearSuffix:'' , timeOnlyTitle: 'الوقت فقط' , timeText: 'الوقت' , hourText: 'ساعة', minuteText: 'دقيقة', secondText: 'ثانية', ampm: true,amText:'ص', month: 'الشهر', week: 'الأسبوع', day: 'اليوم', allDayText: 'سا ئراليوم' };
+			PrimeFaces.locales ['en'] = { closeText: 'إغلق', prevText: 'إلى الخلف', nextText: 'إلى الأمام', currentText: 'بداية', monthNames: ['يناير','فبراير' ,'مارس','ابريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'], monthNamesShort: ['يناير','فبراير' ,'مارس','ابريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'], dayNames: ['يوم الأحد‎', 'يوم الإثنين‎', 'يوم الثلاثاء‎', '‏يوم الأَرْبعاء‎', '‏يوم الخَمِيس‎', 'يوم الجُمْعَة‎‎', 'يوم السَّبْت'], dayNamesShort: ['الأحد‎', 'الإثنين‎', 'الثلاثاء‎', 'الأَرْبعاء‎', 'الخَمِيس‎', 'الجُمْعَة‎‎', 'السَّبْت'], dayNamesMin: ['الأحد‎', 'الإثنين‎', 'الثلاثاء‎', 'الأَرْبعاء‎', 'الخَمِيس‎', 'الجُمْعَة‎‎', 'السَّبْت'], weekHeader: 'الأسبوع', firstDay: 6, isRTL: true, showMonthAfterYear: false, yearSuffix:'' , timeOnlyTitle: 'الوقت فقط' , timeText: 'الوقت' , hourText: 'ساعة', minuteText: 'دقيقة', secondText: 'ثانية', ampm: true,amText:'ص', month: 'الشهر', week: 'الأسبوع', day: 'اليوم', allDayText: 'سا ئراليوم' };
+		</script>
+
+	   <script>
+	   function displayHijriCal() {
+		   
+		   var calendar = $.calendars.instance('ummalqura', 'ar');
+
+		   $('#registerEmployee\\:birthDateHijri').calendarsPicker(
+				   $.extend({calendar: calendar},
+				   $.calendarsPicker.regionalOptions['ar'],
+					{
+					   yearRange:'-61:+0'
+					}	   
+				   
+				   ));
+		   
+		   $('#registerCompany\\:commercialExpirationDate').calendarsPicker(
+				   $.extend({calendar: calendar},
+				   $.calendarsPicker.regionalOptions['ar'],
+				   {
+					   yearRange:'-0:+10',
+					   minDate: 'today'
+					   
+				   }
+				   ));
+		   
+		   $('#employeeProfile\\:birthDateHijri').calendarsPicker(
+				   $.extend({calendar: calendar},
+				   $.calendarsPicker.regionalOptions['ar'],
+				   {
+						yearRange:'-61:-17'
+				   }
+				   ));
+		   
+	   }
+ $(function() {
+	 displayHijriCal();	
+ });
+
+function showDate(date) {
+alert('The date chosen is ' + date);
+}
+</script>
+
+ 	<title><ui:insert name="title"></ui:insert></title>
+    </h:head>
+
+    <h:body>
+    
+ 
+<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+ 
+<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+    <p:graphicImage name="images/ajax-load.gif" />
+</p:dialog>
+
+	<div id="page" class="container all">
+		<div class="content">
+	    <div id="header">
+		<ui:insert name="header" >
+		  <ui:include src="commonHeader.xhtml" /> 
+		</ui:insert>
+	    </div>
+
+	    <div id="content">
+	  	<ui:insert name="content" >
+	 	  <ui:include src="commonContent.xhtml" />
+	   	</ui:insert>
+	    </div>
+	    </div>
+
+	    <div id="footer">
+	    	<ui:insert name="footer" >
+	    	  <ui:include src="commonFooter.xhtml" />
+	    	</ui:insert>
+    	    </div>
+
+        </div>
+    </h:body>
+    </f:view>
+</html>

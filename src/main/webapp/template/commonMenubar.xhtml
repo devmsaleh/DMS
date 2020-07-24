@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      >
+    <body>
+	    <ui:composition>
+
+		<p:tabMenu activeIndex="#{activeIndex}" style="margin-bottom:10px">
+		    <p:menuitem value="#{bundle['search']}" outcome="/public/search.xhtml" icon="fa fa-search" />
+		    <p:menuitem value="#{bundle['enter']}" outcome="/public/add.xhtml" icon="fa fa-plus-square" />
+		    <p:menuitem value="#{bundle['managment']}"   outcome="/admin/manageDocumentClasses.xhtml" icon="fa fa-wrench" />					    
+		</p:tabMenu>
+		
+		<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		    <p:graphicImage library="images" name="ajax-load.gif"  />
+		</p:dialog>
+
+	    </ui:composition>
+    </body>
+</html>

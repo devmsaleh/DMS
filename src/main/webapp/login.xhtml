@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+         <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/images/favicon.ico" />
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>تسجيل الدخول</title>
+    </h:head>
+
+    <h:body styleClass="login-body">
+    
+        <form action="#{request.contextPath}/login" method="post">
+        <div id="login-wrapper">
+            <p:graphicImage cache="true" name="images/login-logo.png" library="omega-layout" />
+            
+            <div id="login-container">
+                <span class="title">تسجيل الدخول</span>
+                
+                <div class="ui-g ui-fluid">
+                    <div class="ui-g-12">
+                        <p:inputText id="username" placeholder="إسم المستخدم" />
+                    </div>
+                    <div class="ui-g-12">
+                        <p:password id="password" placeholder="كلمة السر" feedback="false"/>
+                    </div>
+                    <div class="ui-g-12 ui-md-6" style="display:none">
+                        <span class="remember-me">Remember Me</span>
+                        <p:selectBooleanCheckbox />
+                    </div>
+                    <div class="ui-g-12 ui-md-6" style="display:none">
+                        <p:link outcome="login">إنشاء حساب جديد</p:link>
+                    </div>
+                    <div class="ui-g-12 ui-md-6" style="display:none">
+                        <p:link outcome="login">نسيت كلمة المرور</p:link>
+                    </div>
+                    <div class="ui-g-12">
+                        <h:commandButton styleClass="ui-button" style="color:white;padding: .3em 1em .3em 2.1em;"  value="تسجيل الدخول"  /> 
+                    </div>
+                    
+                    <div class="ui-g-12">
+	                    <h:panelGroup rendered="#{param.error != null}" id="errorMessage" layout="block" styleClass="ui-messages-error ui-corner-all">
+	      				    <h:panelGroup styleClass="ui-messages-error-icon"></h:panelGroup>
+	      				    <h:panelGroup styleClass="ui-messages-error-detail">اسم المستخدم او كلمة المرور غير صحيحة</h:panelGroup>
+	    			     </h:panelGroup>
+    			     </div>
+                </div>
+            </div> 
+            
+            <div class="login-footer"> جميع الحقوق محفوظة © وثائق</div>
+        </div>
+        </form>
+        
+        <h:outputStylesheet name="css/layout.css" library="omega-layout" />
+    </h:body>
+
+</html>

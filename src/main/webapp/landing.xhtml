@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head> 
+         <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/images/favicon.ico" />     
+        <f:facet name="first">        
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        
+        <title>طلقة لخدمات الشحن</title>
+        <script type="text/javascript">
+        $(function() {
+            $('#menu-button').on('click', function(e) {
+                $('#menu').toggleClass('overlay-menu');
+                e.preventDefault();
+            });
+        });
+        
+        </script>
+        <ui:insert name="head"/>
+    </h:head>
+
+    <h:body styleClass="landing-body">
+        <h:form id="form">
+        <p:growl autoUpdate="true" id="messages" showDetail="false" escape="false"/>
+        <div class="landing-wrapper">
+            
+            
+            <ui:include src="/template/headerPublic.xhtml" />
+            
+            <p:cache region="introRegion" key="introLanding">
+            <div id="introduction">
+                <div class="introduction-content">
+                    <h:outputLabel rendered="false" value="دليل شركات الشحن" styleClass="title" />
+                    <h:outputLabel rendered="false" value="اشحن بسهولة وسرعة" styleClass="subtitle" />
+                    <p:graphicImage rendered="false" name="images/landing/section1_bg.jpg" library="omega-layout" />
+                    <p:commandButton rendered="false" type="button" value="Sign Up"></p:commandButton>
+                </div>
+            </div>
+            </p:cache>
+            
+            
+            
+            
+            <div id="features" dir="rtl">
+                <div class="features-content">
+				    <p:fieldset legend="استعراض الشركات" style="margin-bottom:20px">
+				       
+						   <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-2" style="margin:0 auto;width:300px;" styleClass="ui-panelgrid-blank">
+							   
+							   <p:selectOneMenu  value="#{currentUserBean.selectedCountryId}" autoWidth="false" required="true" requiredMessage="من فضلك قم باختيار الدولة">
+									<f:selectItem itemLabel="اختر الدولة" itemValue="" noSelectionOption="true"/>
+								    <f:selectItems var="country" value="#{currentUserBean.countriesList}" itemLabel="#{country.name}" itemValue="#{country.id}" />
+					                <p:ajax onstart="PF('loadingDialogWidget').show();" onerror="PF('loadingDialogWidget').hide();" 
+						               oncomplete="PF('loadingDialogWidget').hide();" listener="#{currentUserBean.loadCities}" update="cities"/>
+							    </p:selectOneMenu>
+							    
+								<p:selectOneMenu id="cities" value="#{currentUserBean.selectedCityId}" autoWidth="false" required="true" requiredMessage="من فضلك قم باختيار المدينة">
+									<f:selectItem itemLabel="اختر المدينة" itemValue="" noSelectionOption="true"/>
+								    <f:selectItems var="city" value="#{currentUserBean.citiesList}" itemLabel="#{city.name}" itemValue="#{city.id}" />
+								</p:selectOneMenu>
+								
+								<p:selectOneMenu  value="#{currentUserBean.selectedDestinationCountryId}" autoWidth="false" required="true" requiredMessage="من فضلك قم باختيار وجهة الشحن">
+									<f:selectItem itemLabel="اختر وجهة الشحن" itemValue="" noSelectionOption="true"/>
+								    <f:selectItems var="country" value="#{currentUserBean.countriesList}" itemLabel="#{country.name}" itemValue="#{country.id}" />
+							    </p:selectOneMenu>
+								
+							</p:panelGrid>
+							
+							<h:panelGroup id="button" layout="block" style="text-align:center">
+								  <p:commandButton  action="#{currentUserBean.search}" onstart="PF('loadingDialogWidget').show();" oncomplete="if (args &amp;&amp; args.validationFailed) PF('loadingDialogWidget').hide();"   value="بحث"   icon="ui-icon-check" /> 
+							</h:panelGroup>
+						
+					</p:fieldset>
+                    
+                </div>
+            </div>
+ 
+            <ui:include src="/template/footerPublic.xhtml" />
+            
+            
+        </div>
+       
+        </h:form>
+    </h:body>
+
+</html>
