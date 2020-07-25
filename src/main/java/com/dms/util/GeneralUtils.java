@@ -158,7 +158,7 @@ public class GeneralUtils {
 	public static String getTempFolderPhysicalPath() {
 		ServletContext servletContext = GeneralUtils.getHttpSession().getServletContext();
 		String applicationPhyisicalPath = servletContext.getRealPath("/");
-		String tempSessionFolder = applicationPhyisicalPath + File.separator + Constants.TEMP_IMAGES_FOLDER;
+		String tempSessionFolder = applicationPhyisicalPath + Constants.TEMP_IMAGES_FOLDER;
 		return tempSessionFolder;
 	}
 

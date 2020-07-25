@@ -1,12 +1,21 @@
 package com.dms.beans;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +58,46 @@ public class ViewerBean implements Serializable {
 					filesList.add(document.getFullPath());
 				}
 			}
+			List<String> finalList = new ArrayList<String>();
+			for (String str : filesList) {
+				String newFile = copyFileToTemp(str);
+				System.out.println("###### copiedFile: " + newFile);
+				finalList.add(newFile);
+			}
+			filesList.clear();
+			filesList.addAll(finalList);
 			System.out.println("###### document: " + document);
 		} catch (Exception e) {
 			log.error("Exception in init ViewerBean", e);
 		}
+	}
+
+	private String copyFileToTemp(String inputFilePath) throws IOException {
+		File file = new File(inputFilePath);
+		String extension = FilenameUtils.getExtension(file.getName());
+		System.out.println("inputFilePath: " + inputFilePath);
+		System.out.println("extension: " + extension);
+		InputStream inputStream = new FileInputStream(file);
+		String newFileName = UUID.randomUUID().toString() + "." + extension;
+		System.out.println("newFileName: " + newFileName);
+		String pathName = GeneralUtils.getTempFolderPhysicalPath() + File.separator + newFileName;
+		System.out.println("pathName: " + pathName);
+		File newFile = new File(pathName);
+		OutputStream outputStream = null;
+		try {
+			outputStream = new FileOutputStream(newFile);
+			IOUtils.copy(inputStream, outputStream);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (inputStream != null)
+				inputStream.close();
+			if (outputStream != null)
+				outputStream.close();
+		}
+
+		return "/dms/temp/" + newFileName;
+
 	}
 
 	public String getFilesListAsJson() {
