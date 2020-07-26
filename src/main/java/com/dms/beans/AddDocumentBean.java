@@ -15,7 +15,7 @@ import javax.faces.component.html.HtmlPanelGrid;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +29,7 @@ import com.dms.entities.Attachment;
 import com.dms.entities.DocumentClass;
 import com.dms.entities.Property;
 import com.dms.enums.CustomColumnsEnum;
+import com.dms.enums.PropertyTypeEnum;
 import com.dms.service.DocumentClassService;
 import com.dms.util.Constants;
 import com.dms.util.CustomFileUtils;
@@ -105,8 +106,21 @@ public class AddDocumentBean implements Serializable {
 
 			for (Property property : selectedDocumentClass.getPropertiesList()) {
 				Object valueObj = propertiesMap.get(property.getSymbolicName());
-				if (valueObj != null)
+				if (valueObj != null && property.getType().equalsIgnoreCase(PropertyTypeEnum.MULTI_TEXT.getValue())) {
+					List<String> valuesList = (List<String>) valueObj;
+					System.out.println("######## list size: " + valuesList.size());
+					StringBuffer sb = new StringBuffer();
+					for (String str : valuesList) {
+						if (!str.startsWith("#")) {
+							str = "#" + str;
+						}
+						sb.append(str.trim());
+					}
+					valueObj = sb.toString();
+				}
+				if (valueObj != null) {
 					property.setValue(valueObj);
+				}
 			}
 
 			setCustomProperties();
@@ -141,7 +155,7 @@ public class AddDocumentBean implements Serializable {
 			attachment.setFullPath(CustomFileUtils.generateRandomStoreFolderPath() + attachment.getFileName());
 			attachment.setMimeType(uploadedFile.getContentType());
 			attachment.setOriginalFileName(uploadedFile.getFileName());
-			Files.write(new File(attachment.getFullPath()).toPath(), uploadedFile.getContents());
+			Files.write(new File(attachment.getFullPath()).toPath(), uploadedFile.getContent());
 			filesList.add(attachment);
 			GeneralUtils.addInfoMessage("تم رفع الملف بنجاح", null);
 		} catch (NoSuchFileException nfe) {

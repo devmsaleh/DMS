@@ -40,7 +40,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
 	private String decideTargetUrl(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) {
-		String targetUrl = "/home.xhtml";
+		String targetUrl = "/searchDocument.xhtml";
 		User user = userService.findByUserNameIgnoreCase(authentication.getName());
 		if (isUserHasRole(user, RoleTypeEnum.ROLE_ADMIN)) {
 

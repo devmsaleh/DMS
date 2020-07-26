@@ -4,6 +4,7 @@ public class InputsDataTypes {
 
 	public static final String DATA_TYPE_ATTRIBUTE_NAME = "dataType";
 	public static final String STRING = "String";
+	public static final String MULTI_TEXT = "MULTI_TEXT";
 	public static final String INTEGER = "Integer";
 	public static final String LONG = "Long";
 	public static final String HIJRI_DATE = "HijriDate";

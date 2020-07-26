@@ -42,7 +42,7 @@
 						       onstart="PF('loadingDialogWidget').show();" 
 						       oncomplete="PF('loadingDialogWidget').hide();"
 						       mode="advanced" auto="true" multiple="false"  immediate="true" 
-	                           fileUploadListener="#{addDocumentBean.handleFileUpload}"
+	                           listener="#{addDocumentBean.handleFileUpload}"
 	                             update="filesTable" />
 	                          <h:panelGroup layout="block" id="filesTable">
 	                               <p:dataTable var="file" value="#{addDocumentBean.filesList}">

@@ -30,7 +30,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 
 import com.dms.entities.Property;
 import com.dms.enums.CustomColumnsEnum;
@@ -179,7 +179,7 @@ public class GeneralUtils {
 		FacesContext.getCurrentInstance().validationFailed();
 		FacesContext.getCurrentInstance().addMessage(clientId, new FacesMessage(severity, message, message));
 		if (StringUtils.isNotBlank(id)) {
-			RequestContext.getCurrentInstance().scrollTo(clientId);
+			PrimeFaces.current().scrollTo(clientId);
 		}
 	}
 

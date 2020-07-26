@@ -96,9 +96,11 @@
 								</f:facet>
 								<h:outputText rendered="#{column.textOnly}" value="#{document.customPropValues[column.property]}" />
 							    <h:panelGrid  columnClasses="noBorder,noBorder" columns="2" rendered="#{!column.textOnly}">
-							       <p:commandButton icon="ui-icon-search" onclick="openImageViewer('#{document.id}','#{document.mimeType}');return false;"/>
-							       <p:commandButton rendered="false" icon="ui-icon-arrowthick-1-s" action="#{searchDocumentBean.loadSelectedFile(document)}" update=":form:download" oncomplete="document.getElementById('form:download').click();"/>							       
-							       <p:commandButton icon="ui-icon-arrowthick-1-s" onclick="downloadDocument('#{document.id}');return false;"/>
+							       <p:button icon="ui-icon-search" value="استعراض" onclick="openImageViewer('#{document.id}','#{document.mimeType}');return false;"/>						       							       
+							       <p:button value="تحميل"
+													href="#{request.contextPath}/viewer?id=#{document.id}&amp;mode=download"
+													icon="fa fa-download">
+									</p:button>
 							    </h:panelGrid>
 							  </p:columns>
 						  </p:dataTable>
