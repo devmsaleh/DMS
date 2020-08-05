@@ -235,7 +235,7 @@ public class GeneralUtils {
 		return whereStr.toString();
 	}
 
-	public static String formateIntDate(int date) {
+	public static String formatIntDate(int date) {
 		String dateStr = String.valueOf(date);
 		if (dateStr.length() < 8)
 			return dateStr;
@@ -245,6 +245,12 @@ public class GeneralUtils {
 
 	public static String getBase64(String filePath) throws IOException {
 		return DatatypeConverter.printBase64Binary(Files.readAllBytes(Paths.get(filePath)));
+	}
+
+	public static void showSystemErrorDialog() {
+		String message = "حدث خطأ فى النظام...يرجى المحاولة مرة أخرى بعد قليل...واذا استمرت المشكلة يرجى الاتصال بالدعم الفني";
+		FacesContext.getCurrentInstance().validationFailed();
+		PrimeFaces.current().dialog().showMessageDynamic(new FacesMessage(FacesMessage.SEVERITY_FATAL, "خطأ", message));
 	}
 
 }

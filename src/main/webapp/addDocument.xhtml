@@ -6,6 +6,16 @@
                 template="/WEB-INF/template.xhtml">
 
     <ui:define name="head">
+        <style>
+          .ui-fileupload-content{
+             display:none !important;
+          }
+          
+          .ui-fileupload-buttonbar{
+             background: transparent !important; 
+             border: none !important;
+          }
+        </style>
         <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
 		<h:outputScript target="head">
 			$ = jQuery;
@@ -22,7 +32,9 @@
         <div class="ui-g">
             <div class="ui-g-12">
                 <h:form id="form" enctype="multipart/form-data">
-                <p:growl autoUpdate="true" id="messages" showDetail="false" escape="false"/>
+                <p:growl id="messages" showDetail="false" escape="false">
+                   <p:autoUpdate />
+                </p:growl>
                 
                   <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
 	                  <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
@@ -37,18 +49,40 @@
 						    
 	                  <p:panelGrid id="propertiesTable" columns="2" columnClasses="inputsColumnAdd,uploadFileColumn" styleClass="ui-panelgrid-blank">
 	                     <h:panelGrid id="inputs" columns="2" binding="#{addDocumentBean.propertiesPanelGrid}"></h:panelGrid>
-	                     <p:panelGrid columns="1" styleClass="ui-panelgrid-blank ui-g-5">
-	                         <p:fileUpload id="fileUpload"  uploadLabel=""  cancelLabel="" label="اختر الملف"  
-						       onstart="PF('loadingDialogWidget').show();" 
+	                     <p:panelGrid columns="1" style="width:70%" styleClass="ui-panelgrid-blank ui-g-5">
+	                         <p:fileUpload widgetVar="fileUpload" id="fileUpload"  uploadLabel=""  cancelLabel="" label="اختر الملفات"  
+						       onstart="PF('loadingDialogWidget').show();"
 						       oncomplete="PF('loadingDialogWidget').hide();"
-						       mode="advanced" auto="true" multiple="false"  immediate="true" 
+						       mode="advanced" auto="true" 
+						       multiple="true"  immediate="true" 
 	                           listener="#{addDocumentBean.handleFileUpload}"
-	                             update="filesTable" />
+	                           update="filesTable" />
 	                          <h:panelGroup layout="block" id="filesTable">
-	                               <p:dataTable var="file" value="#{addDocumentBean.filesList}">
-									    <p:column headerText="اسم الملف">
+	                               <p:dataTable rowIndexVar="index" emptyMessage="لم يتم اختيار ملفات" 
+	                               var="file" value="#{addDocumentBean.filesList}"
+	                               rows="5" 
+	                               paginatorPosition="bottom"
+	                               paginator="#{addDocumentBean.filesList.size() > 5}"
+	                               paginatorTemplate="{CurrentPageReport} {PageLinks}"
+                                   currentPageReportTemplate="{currentPage} من {totalPages}">
+									    <f:facet name="header">
+									        إجمالى عدد الملفات : #{addDocumentBean.filesList.size()}
+									    </f:facet>
+									    <p:column style="text-align:center" width="50" headerText="م">
+									      #{index+1}
+									    </p:column>
+									    <p:column style="text-align:center" headerText="اسم الملف">
 									        <h:outputText value="#{file.originalFileName}" />
-									    </p:column>									 
+									    </p:column>
+									    
+									    <p:column headerText="" width="50" style="text-align:center;">
+									        <p:commandButton  immediate="true"  action="#{addDocumentBean.removeAttachment(index)}"  
+									        onstart="PF('loadingDialogWidget').show();"  oncomplete="PF('loadingDialogWidget').hide();"
+									        update=":form:filesTable"  icon="ui-icon-close">
+									          <p:confirm header="تأكيد" message="هل تريد حذف الملف #{file.originalFileName} ؟" icon="pi pi-exclamation-triangle" />
+									        </p:commandButton>
+									    </p:column>
+							    									 
 								  </p:dataTable>
 	                          </h:panelGroup>   
 	                     </p:panelGrid>
@@ -59,10 +93,15 @@
 							   action="#{addDocumentBean.createNewDocument}"
 							   update="propertiesTable" 
 							   onstart="PF('loadingDialogWidget').show();" 
-			                   oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){}" >					  
+			                   oncomplete="PF('loadingDialogWidget').hide();" >					  
 					  </p:commandButton>
                   </p:panelGrid>
                 
+                  <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			           <p:commandButton value="نعم" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+			           <p:commandButton value="لا" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+			      </p:confirmDialog>
+			        
                 </h:form>
                 <p:outputPanel autoUpdate="true">
 					<h:outputScript id="applyChangeHandler">

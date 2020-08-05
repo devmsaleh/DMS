@@ -15,15 +15,14 @@
 
 @font-face {
     font-family: 'DroidArabicNaskhBold';
-    
-        src: url('#{resource['fonts/DroidArabicNaskhBold.ttf']}') format('truetype');
+    src: url('#{resource['fonts/DroidArabicNaskhBold.ttf']}') format('truetype');
     font-weight: bold;
     font-style: normal;
       }
 
 @font-face { 
     font-family: 'DroidArabicNaskhRegular';
-        src: url('#{resource['fonts/DroidArabicNaskhRegular.ttf']}') format('truetype');
+    src: url('#{resource['fonts/DroidArabicNaskhRegular.ttf']}') format('truetype');
     font-weight: normal;
     font-style: normal;
       }

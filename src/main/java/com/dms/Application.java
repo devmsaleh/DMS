@@ -41,93 +41,99 @@ import com.ocpsoft.pretty.faces.annotation.URLMappings;
 @EnableAsync
 @EnableCaching
 @EnableScheduling
-@URLMappings(mappings = { @URLMapping(id = "default", pattern = "/", viewId = "/login.xhtml"), @URLMapping(id = "login", pattern = "/login", viewId = "/login.xhtml") })
+@URLMappings(mappings = { @URLMapping(id = "default", pattern = "/", viewId = "/login.xhtml"),
+		@URLMapping(id = "login", pattern = "/login", viewId = "/login.xhtml") })
 public class Application extends SpringBootServletInitializer {
 
-    private static final Logger log = LoggerFactory.getLogger(Application.class);
+	private static final Logger log = LoggerFactory.getLogger(Application.class);
 
-    @Value("${environment}")
-    private String environmentStr;
+	@Value("${environment}")
+	private String environmentStr;
 
-    @Autowired
-    AutowireCapableBeanFactory beanFactory;
+	@Autowired
+	AutowireCapableBeanFactory beanFactory;
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class);
+	}
 
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(Application.class);
-    }
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(Application.class);
+	}
 
-    @Bean
-    public TaskScheduler taskScheduler() {
-        return new ConcurrentTaskScheduler();
-    }
+	@Bean
+	public TaskScheduler taskScheduler() {
+		return new ConcurrentTaskScheduler();
+	}
 
-    @Bean
-    public ServletContextInitializer servletContextCustomizer() {
-        return new ServletContextInitializer() {
-            @Override
-            public void onStartup(ServletContext servletContext) throws ServletException {
-                servletContext.setInitParameter("primefaces.CLIENT_SIDE_VALIDATION", Boolean.TRUE.toString());
-                servletContext.setInitParameter("javax.faces.FACELETS_SKIP_COMMENTS", Boolean.TRUE.toString());
-                servletContext.setInitParameter("primefaces.FONT_AWESOME", Boolean.TRUE.toString());
-                servletContext.setInitParameter("primefaces.UPLOADER", "commons");
-                servletContext.setInitParameter("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE", Boolean.TRUE.toString());
-                servletContext.setInitParameter("javax.faces.PROJECT_STAGE", environmentStr);
-                servletContext.setInitParameter("primefaces.THEME", "omega");
-            }
-        };
-    }
+	@Bean
+	public ServletContextInitializer servletContextCustomizer() {
+		return new ServletContextInitializer() {
+			@Override
+			public void onStartup(ServletContext servletContext) throws ServletException {
+				servletContext.setInitParameter("javax.faces.STATE_SAVING_METHOD", "server");
+				servletContext.setInitParameter("primefaces.CLIENT_SIDE_VALIDATION", Boolean.TRUE.toString());
+				servletContext.setInitParameter("javax.faces.FACELETS_SKIP_COMMENTS", Boolean.TRUE.toString());
+				servletContext.setInitParameter("primefaces.FONT_AWESOME", Boolean.TRUE.toString());
+				servletContext.setInitParameter("primefaces.UPLOADER", "commons");
+				servletContext.setInitParameter("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE",
+						Boolean.TRUE.toString());
+				servletContext.setInitParameter("javax.faces.PROJECT_STAGE", environmentStr);
+				servletContext.setInitParameter("primefaces.THEME", "omega");
+				servletContext.setInitParameter("javax.faces.FACELETS_LIBRARIES",
+						"/WEB-INF/primefaces-omega.taglib.xml");
+			}
+		};
+	}
 
-    @Bean
-    public static CustomScopeConfigurer customScopeConfigurer() {
-        CustomScopeConfigurer configurer = new CustomScopeConfigurer();
-        configurer.setScopes(Collections.<String, Object> singletonMap(FacesViewScope.NAME, new FacesViewScope()));
-        return configurer;
-    }
+	@Bean
+	public static CustomScopeConfigurer customScopeConfigurer() {
+		CustomScopeConfigurer configurer = new CustomScopeConfigurer();
+		configurer.setScopes(Collections.<String, Object>singletonMap(FacesViewScope.NAME, new FacesViewScope()));
+		return configurer;
+	}
 
-    @Bean
-    public FilterRegistrationBean FileUploadFilter() {
-        FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new org.primefaces.webapp.filter.FileUploadFilter());
-        registration.setName("PrimeFaces FileUpload Filter");
-        return registration;
-    }
+	@Bean
+	public FilterRegistrationBean FileUploadFilter() {
+		FilterRegistrationBean registration = new FilterRegistrationBean();
+		registration.setFilter(new org.primefaces.webapp.filter.FileUploadFilter());
+		registration.setName("PrimeFaces FileUpload Filter");
+		return registration;
+	}
 
-    @Bean
-    public FilterRegistrationBean hiddenHttpMethodFilterDisabled(@Qualifier("hiddenHttpMethodFilter") HiddenHttpMethodFilter filter) {
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(filter);
-        filterRegistrationBean.setEnabled(false);
-        return filterRegistrationBean;
-    }
+	@Bean
+	public FilterRegistrationBean hiddenHttpMethodFilterDisabled(
+			@Qualifier("hiddenHttpMethodFilter") HiddenHttpMethodFilter filter) {
+		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(filter);
+		filterRegistrationBean.setEnabled(false);
+		return filterRegistrationBean;
+	}
 
-    @Bean
-    public LocaleResolver localeResolver() {
-        SessionLocaleResolver slr = new SessionLocaleResolver();
-        slr.setDefaultLocale(new Locale("ar"));
-        return slr;
-    }
+	@Bean
+	public LocaleResolver localeResolver() {
+		SessionLocaleResolver slr = new SessionLocaleResolver();
+		slr.setDefaultLocale(new Locale("ar"));
+		return slr;
+	}
 
-    @Bean
-    public ResourceBundleMessageSource messageSource() {
-        ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-        source.setBasenames("bundle"); // name of the resource bundle
-        source.setUseCodeAsDefaultMessage(true);
-        source.setDefaultEncoding("UTF-8");
-        // source.setCacheSeconds(10);
-        return source;
-    }
+	@Bean
+	public ResourceBundleMessageSource messageSource() {
+		ResourceBundleMessageSource source = new ResourceBundleMessageSource();
+		source.setBasenames("bundle"); // name of the resource bundle
+		source.setUseCodeAsDefaultMessage(true);
+		source.setDefaultEncoding("UTF-8");
+		// source.setCacheSeconds(10);
+		return source;
+	}
 
-    @Bean
-    public ServletRegistrationBean servletRegistrationBean(DocumentRepository documentRepository) {
-        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean();
-        ViewerServlet viewerServlet = new ViewerServlet(documentRepository);
-        servletRegistrationBean.setServlet(viewerServlet);
-        servletRegistrationBean.setUrlMappings(Arrays.asList("/viewer/*"));
-        return servletRegistrationBean;
-    }
+	@Bean
+	public ServletRegistrationBean servletRegistrationBean(DocumentRepository documentRepository) {
+		ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean();
+		ViewerServlet viewerServlet = new ViewerServlet(documentRepository);
+		servletRegistrationBean.setServlet(viewerServlet);
+		servletRegistrationBean.setUrlMappings(Arrays.asList("/viewer/*"));
+		return servletRegistrationBean;
+	}
 
 }

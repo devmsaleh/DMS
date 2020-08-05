@@ -69,6 +69,8 @@ public class AddDocumentBean implements Serializable {
 
 	private List<Attachment> filesList = new ArrayList<Attachment>();
 
+	private int numberOfSelectedFiles;
+
 	@PostConstruct
 	public void init() {
 		try {
@@ -97,7 +99,7 @@ public class AddDocumentBean implements Serializable {
 		try {
 
 			if (filesList.size() == 0) {
-				GeneralUtils.addErrorMessage("يجب رفع الملف أولا", null);
+				GeneralUtils.addErrorMessage("يجب رفع الملفات أولا", null);
 				return;
 			}
 
@@ -123,19 +125,42 @@ public class AddDocumentBean implements Serializable {
 				}
 			}
 
-			setCustomProperties();
-			utilsRepository.insertDocument(selectedDocumentClass.getTableName().getValue(),
-					selectedDocumentClass.getPropertiesList());
-			removeCustomProperties();
+			for (Attachment attachment : filesList) {
+				doUploadFile(attachment);
+				setCustomProperties(attachment);
+				utilsRepository.insertDocument(selectedDocumentClass.getTableName().getValue(),
+						selectedDocumentClass.getPropertiesList());
+				removeCustomProperties();
+			}
 			for (Property property : selectedDocumentClass.getPropertiesList()) {
 				property.setValue("");
 			}
 			UIUtils.clearPrpertiesInputs(propertiesPanelGrid);
 			filesList.clear();
-			PrimeFaces.current().ajax().addCallbackParam("successDialog", true);
+			PrimeFaces.current().executeScript("PF('successDialogWidget').show()");
 		} catch (Exception e) {
-			PrimeFaces.current().ajax().addCallbackParam("errorDialog", true);
 			log.error("Exception in init createNewDocument", e);
+			GeneralUtils.showSystemErrorDialog();
+		}
+	}
+
+	private void doUploadFile(Attachment attachment) throws Exception {
+		try {
+			Files.write(new File(attachment.getFullPath()).toPath(), attachment.getContent());
+		} catch (NoSuchFileException e) {
+			log.error("###### NoSuchFileException in doUploadFile >>> createStoreFolders: ", e);
+			FileStore.createStoreFolders("C:\\FileStore");
+			doUploadFile(attachment);
+		}
+	}
+
+	public void removeAttachment(int rowIndex) {
+		try {
+			filesList.remove(rowIndex);
+		} catch (Exception e) {
+			log.error("####### Exception in removeAttachment,rowIndex: " + rowIndex + " Exception is:", e);
+			GeneralUtils.showSystemErrorDialog();
+			return;
 		}
 	}
 
@@ -143,10 +168,7 @@ public class AddDocumentBean implements Serializable {
 
 		try {
 
-			if (filesList.size() == 1) {
-				GeneralUtils.addErrorMessage("لا يمكن رفع أكثر من ملف واحد", null);
-				return;
-			}
+			System.out.println("######## handleFileUpload ##########");
 
 			UploadedFile uploadedFile = event.getFile();
 			Attachment attachment = new Attachment();
@@ -155,28 +177,26 @@ public class AddDocumentBean implements Serializable {
 			attachment.setFullPath(CustomFileUtils.generateRandomStoreFolderPath() + attachment.getFileName());
 			attachment.setMimeType(uploadedFile.getContentType());
 			attachment.setOriginalFileName(uploadedFile.getFileName());
-			Files.write(new File(attachment.getFullPath()).toPath(), uploadedFile.getContent());
+			attachment.setContent(uploadedFile.getContent());
 			filesList.add(attachment);
-			GeneralUtils.addInfoMessage("تم رفع الملف بنجاح", null);
-		} catch (NoSuchFileException nfe) {
-			FileStore.createStoreFolders("C:\\FileStore");
-			handleFileUpload(event);
+
 		} catch (Exception e) {
 			log.error("Exception in handleFileUpload", e);
-			GeneralUtils.addErrorMessage("حدث خطأ فى النظام من فضلك حاول مرة أخرى لاحقا", null);
+			GeneralUtils.showSystemErrorDialog();
 		}
 
 	}
 
-	private void setCustomProperties() {
-		selectedDocumentClass.getPropertiesList().add(new Property(CustomColumnsEnum.CONTENT_SIZE.getValue(), 0));
+	private void setCustomProperties(Attachment attachment) {
+		selectedDocumentClass.getPropertiesList()
+				.add(new Property(CustomColumnsEnum.CONTENT_SIZE.getValue(), attachment.getContentSize()));
 		selectedDocumentClass.getPropertiesList()
 				.add(new Property(CustomColumnsEnum.DOCUMENT_CLASS_ID.getValue(), selectedDocumentClass.getId()));
 		selectedDocumentClass.getPropertiesList()
 				.add(new Property(CustomColumnsEnum.CREATED_BY_ID.getValue(), currentUserBean.getUser().getId()));
 		selectedDocumentClass.getPropertiesList()
 				.add(new Property(CustomColumnsEnum.DATE_CREATED.getValue(), GeneralUtils.getCurrentTimeMYSQL()));
-		Attachment attachment = filesList.get(0);
+
 		selectedDocumentClass.getPropertiesList()
 				.add(new Property(CustomColumnsEnum.FILE_NAME.getValue(), attachment.getFileName()));
 		selectedDocumentClass.getPropertiesList()
@@ -241,6 +261,14 @@ public class AddDocumentBean implements Serializable {
 
 	public void setFilesList(List<Attachment> filesList) {
 		this.filesList = filesList;
+	}
+
+	public int getNumberOfSelectedFiles() {
+		return numberOfSelectedFiles;
+	}
+
+	public void setNumberOfSelectedFiles(int numberOfSelectedFiles) {
+		this.numberOfSelectedFiles = numberOfSelectedFiles;
 	}
 
 }

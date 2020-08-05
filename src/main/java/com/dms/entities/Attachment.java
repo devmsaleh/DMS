@@ -7,6 +7,7 @@ public class Attachment {
 	private String mimeType;
 	private String fullPath;
 	private long contentSize;
+	private byte[] content;
 
 	public String getOriginalFileName() {
 		return originalFileName;
@@ -46,6 +47,14 @@ public class Attachment {
 
 	public void setContentSize(long contentSize) {
 		this.contentSize = contentSize;
+	}
+
+	public byte[] getContent() {
+		return content;
+	}
+
+	public void setContent(byte[] content) {
+		this.content = content;
 	}
 
 }

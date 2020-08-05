@@ -20,6 +20,7 @@ public class FacesViewScope implements Scope {
 
 		if (FacesContext.getCurrentInstance() == null)
 			return null;
+
 		Map<String, Object> viewMap = FacesContext.getCurrentInstance().getViewRoot().getViewMap();
 
 		if (viewMap.containsKey(name)) {

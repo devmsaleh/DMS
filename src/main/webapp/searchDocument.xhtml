@@ -32,16 +32,18 @@
         function openImageViewer(documentId,documentMimeType){
         	
         	//alert("documentId: "+documentId+",documentMimeType: "+documentMimeType);
-
-			if(documentMimeType.indexOf('image') == -1){
-			  alert('not an image');         		  
-			  return;
+            var viewerUrl= 'viewer.xhtml?id='+documentId;
+            var width= 1200;
+			var height= 650;
+            if(documentMimeType.indexOf('image') != -1){         		  
+            	openWindow(viewerUrl,width,height,true);
+			}else if(documentMimeType.indexOf('pdf') != -1){         		  
+				viewerUrl= 'viewerPDF.xhtml?id='+documentId+"&amp;t=pdf";
+				openWindow(viewerUrl,width,height,true);
 			}
 			
-			var viewerUrl= 'viewer.xhtml?id='+documentId;
-			var width= 1200;
-			var height= 800;
-			openWindow(viewerUrl,width,height,true);
+			
+			
 		
         }
         
@@ -95,13 +97,18 @@
 									<h:outputText value="#{column.header}" />
 								</f:facet>
 								<h:outputText rendered="#{column.textOnly}" value="#{document.customPropValues[column.property]}" />
-							    <h:panelGrid  columnClasses="noBorder,noBorder" columns="2" rendered="#{!column.textOnly}">
+							    <h:panelGrid  columnClasses="noBorder,noBorder,noBorder" columns="3" rendered="#{!column.textOnly}">
+							       <p:graphicImage id="img"  name="images/thumbnail.png" library="omega-layout" style="cursor:pointer" title="Custom Options" rendered="#{document.mimeType.indexOf('image') != -1}"/>		       
 							       <p:button icon="ui-icon-search" value="استعراض" onclick="openImageViewer('#{document.id}','#{document.mimeType}');return false;"/>						       							       
 							       <p:button value="تحميل"
 													href="#{request.contextPath}/viewer?id=#{document.id}&amp;mode=download"
 													icon="fa fa-download">
 									</p:button>
 							    </h:panelGrid>
+							    <p:overlayPanel my="right center" at="right center"  dynamic="true" id="imgPanel" for="img" showEffect="blind"  hideEffect="explode" showEvent="mouseover" 
+								                    dismissable="true" showCloseIcon="true">
+								        <p:graphicImage cache="true" width="400" height="400"  value="/viewer?id=#{document.id}" />
+								</p:overlayPanel>
 							  </p:columns>
 						  </p:dataTable>
 					  </h:panelGroup>

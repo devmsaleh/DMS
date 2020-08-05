@@ -3,7 +3,7 @@
 
 <property name="logPattern" value="%d %-5level %logger{35} - %msg%n"/>
 <property name="logEncoding" value="UTF-8"/>
-<property name="logDirectory" value="C:\\SHIPPING_LOG"/>
+<property name="logDirectory" value="C:\\DMS_LOGS"/>
 
 <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
@@ -13,10 +13,10 @@
 </appender>
   
 <appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${logDirectory}/dawam.log</file>
+    <file>${logDirectory}/dms.log</file>
     
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">              
-        <fileNamePattern>${logDirectory}/shipping.%d{yyyy-MM-dd}.log</fileNamePattern>
+        <fileNamePattern>${logDirectory}/dms.%d{yyyy-MM-dd}.log</fileNamePattern>
         <maxHistory>30</maxHistory>
     </rollingPolicy>
     

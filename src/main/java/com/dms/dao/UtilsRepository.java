@@ -79,7 +79,8 @@ public class UtilsRepository {
 				value = dataArray[i + numberOfSystemProperties];
 				if (propertiesList.get(i).getType().equalsIgnoreCase(PropertyTypeEnum.GREG_DATE.getValue())
 						|| propertiesList.get(i).getType().equalsIgnoreCase(PropertyTypeEnum.HIJRI_DATE.getValue())) {
-					value = GeneralUtils.formateIntDate((int) value);
+					if (value != null)
+						value = GeneralUtils.formatIntDate((int) value);
 				}
 				document.getCustomPropValues().put(propertiesList.get(i).getSymbolicName(), value);
 				System.out.println("######### property " + propertiesList.get(i).getDisplayNameArabic() + "("

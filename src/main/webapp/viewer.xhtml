@@ -21,6 +21,9 @@
        
 		<script src="#{request.contextPath}/resources/openseadragon/openseadragon.min.js"></script>
 		
+		<div id="loading" style="width: 500px; margin:0 auto">
+		   <p:graphicImage id="loading" name="images/preloader.gif" library="omega-layout" style="top: 150px; position: absolute; z-index: 500000;"/>
+		</div>		
 		<div id="tilesource-collection" style="width: 800px; height: 600px;"></div>
 		<script type="text/javascript">
 		//<![CDATA[
@@ -46,12 +49,27 @@
 		        tileSources: tileSources
 		    });
 		    
-		    viewer.addHandler('open', function() {
+		    showLoading();
+		    
+		    viewer.addHandler('open', function() {		    	  
 		    	  var tiledImage = viewer.world.getItemAt(0); // Assuming you just have a single image in the viewer
+		    	  if (tiledImage.getFullyLoaded()) {
+		    		    hideLoading();
+		    		  } else {
+		    		    tiledImage.addOnceHandler('fully-loaded-change', hideLoading);
+		          }
 		    	  var targetZoom = tiledImage.source.dimensions.x / viewer.viewport.getContainerSize().x;
 		    	  viewer.viewport.zoomTo(targetZoom, null, true);
+		    	  
 		    	});
 		
+		    function showLoading(){
+		        
+		    }
+		    
+		    function hideLoading(){
+		    	document.getElementById('loading').style.display='none';
+		    }
 		
 		//]]>
 		</script>

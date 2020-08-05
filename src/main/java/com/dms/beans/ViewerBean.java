@@ -17,6 +17,8 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,36 +41,58 @@ public class ViewerBean implements Serializable {
 	@Autowired
 	private DocumentRepository documentRepository;
 
+	private String downloadFileName = "untitled.pdf";
+
+	private StreamedContent content;
+
 	private List<String> filesList = new ArrayList<String>();
 
 	@PostConstruct
 	public void init() {
+		System.out.println("####### viewerBean init ########");
 		try {
-			String id = GeneralUtils.getHttpServletRequest().getParameter("id");
-			if (StringUtils.isBlank(id)) {
-				System.out.println("###### INVALID DOC ID #########");
-				return;
-			}
-			Optional<Document> documentOptional = documentRepository.findById(Long.parseLong(id));
-			Document document = documentOptional.get();
-			if (document != null) {
-				if (document.getMimeType().equalsIgnoreCase("image/tiff")) {
-					filesList = GeneralUtils.convertTiffToPNG(document.getFullPath());
-				} else if (document.getMimeType().contains("image")) {
-					filesList.add(document.getFullPath());
-				}
+			String mimeType = GeneralUtils.getHttpServletRequest().getParameter("t");
+			if (StringUtils.isBlank(mimeType) || mimeType.toLowerCase().contains("image"))
+				doLoadDocument();
+		} catch (Exception e) {
+			log.error("Exception in init ViewerBean", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void doLoadDocument() throws Exception {
+		String id = GeneralUtils.getHttpServletRequest().getParameter("id");
+		System.out.println("###### doLoadDocument,id: " + id);
+		if (StringUtils.isBlank(id)) {
+			System.out.println("###### INVALID DOC ID #########");
+			return;
+		}
+		Optional<Document> documentOptional = documentRepository.findById(Long.parseLong(id));
+		Document document = documentOptional.get();
+		if (document == null)
+			return;
+		String mimeType = document.getMimeType().toLowerCase();
+		System.out.println("######### mimeType: " + mimeType + ",fileName: " + document.getFileName());
+		if (mimeType.contains("image")) {
+
+			if (mimeType.equalsIgnoreCase("image/tiff")) {
+				filesList = GeneralUtils.convertTiffToPNG(document.getFullPath());
+			} else {
+				filesList.add(document.getFullPath());
 			}
 			List<String> finalList = new ArrayList<String>();
 			for (String str : filesList) {
 				String newFile = copyFileToTemp(str);
-				System.out.println("###### copiedFile: " + newFile);
 				finalList.add(newFile);
 			}
 			filesList.clear();
 			filesList.addAll(finalList);
-			System.out.println("###### document: " + document);
-		} catch (Exception e) {
-			log.error("Exception in init ViewerBean", e);
+
+		} else if (mimeType.contains("pdf")) {
+			downloadFileName = document.getFileName();
+			FileInputStream fis = new FileInputStream(new File(document.getFullPath()));
+			content = DefaultStreamedContent.builder().contentType(mimeType).name(document.getFileName())
+					.stream(() -> fis).build();
 		}
 	}
 
@@ -110,6 +134,30 @@ public class ViewerBean implements Serializable {
 
 	public void setFilesList(List<String> filesList) {
 		this.filesList = filesList;
+	}
+
+	public String getDownloadFileName() {
+		return downloadFileName;
+	}
+
+	public void setDownloadFileName(String downloadFileName) {
+		this.downloadFileName = downloadFileName;
+	}
+
+	public StreamedContent getContent() {
+		if (content == null) {
+			System.out.println("######### getContent #####");
+			try {
+				doLoadDocument();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return content;
+	}
+
+	public void setContent(StreamedContent content) {
+		this.content = content;
 	}
 
 }

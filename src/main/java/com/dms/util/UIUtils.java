@@ -267,12 +267,13 @@ public class UIUtils {
 				// required validation,too much text validation in (add,edit)
 				if (!searchDocuments) {
 					// required validation
-					String requiredMessage = ("validation.required");
+					String requiredMessage = "الحقل " + property.getDisplayNameArabic() + " إجباري";
 					uiInput.setRequired(property.isRequired());
 					uiInput.setRequiredMessage(requiredMessage);
 					// too much text validation
 					if (property.getType().equals(PropertyTypeEnum.LONG_TEXT.getValue())) {
-						String tooMuchDataMessage = ("tooMuchDataMessage");
+						String tooMuchDataMessage = "النص المدخل كبير...يجب أن لا يتجاوز عدد الحروف : "
+								+ property.getMaxLength();
 						uiInput.addValidator(createLengthValidator(property.getMaxLength()));
 						uiInput.setValidatorMessage(tooMuchDataMessage);
 					}
