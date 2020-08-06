@@ -108,8 +108,8 @@ public class UIUtils {
 	 * @param currentUser
 	 * @throws java.lang.Exception
 	 **/
-	public static void generatePropertiesInputs(List<Property> properties, HtmlPanelGrid propertiesPanelGrid,
-			Locale locale, String operationName, User currentUser) throws Exception {
+	public static void generatePropertiesInputsForAdd(List<Property> properties, HtmlPanelGrid propertiesPanelGrid,
+			Locale locale, User currentUser) throws Exception {
 
 		propertiesPanelGrid.getChildren().clear();
 
@@ -117,42 +117,25 @@ public class UIUtils {
 			propertiesPanelGrid.setId(propertiesPanelGridId);
 		}
 
-		boolean searchDocuments = false;
-		boolean addDocument = false;
-		boolean editDocument = false;
-		boolean makeUIInputNull = false;
-
-		if (operationName.equalsIgnoreCase(Constants.OPERATION_SEARCH_DOCUMENTS))
-			searchDocuments = true;
-		else if (operationName.equalsIgnoreCase(Constants.OPERATION_ADD_DOCUMENT))
-			addDocument = true;
-		else if (operationName.equalsIgnoreCase(Constants.OPERATION_EDIT_DOCUMENT))
-			editDocument = true;
-
-		UIInput uiInput = null; // UIInput is set to null in search and property
-								// is hijriDate
+		UIInput uiInput = null;
 
 		for (Property property : properties) {
 
 			if (property == null)
 				continue;
 
-			makeUIInputNull = false;
-
 			HtmlOutputLabel label = new HtmlOutputLabel();
 			label.setStyle(InputsStyles.LABEL_STYLE);
 			label.setValue(property.getDisplayNameArabic());
 
-			if (!searchDocuments) {
-				if (property.isRequired())
-					label.setStyleClass(InputsStyles.REQUIRED_LABEL_STYLE);
-				else
-					label.setStyleClass(InputsStyles.NOT_REQUIRED_LABEL_STYLE);
-			}
+			if (property.isRequired())
+				label.setStyleClass(InputsStyles.REQUIRED_LABEL_STYLE);
+			else
+				label.setStyleClass(InputsStyles.NOT_REQUIRED_LABEL_STYLE);
 
 			propertiesPanelGrid.getChildren().add(label);
 
-			if (!searchDocuments && property.getType().equals(PropertyTypeEnum.MULTI_TEXT.getValue())) {
+			if (property.getType().equals(PropertyTypeEnum.MULTI_TEXT.getValue())) {
 				Chips input = new Chips();
 				input.setId(property.getSymbolicName());
 				input.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.MULTI_TEXT);
@@ -163,8 +146,7 @@ public class UIUtils {
 					|| property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())
 					|| property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())
 					|| property.getType().equals(PropertyTypeEnum.SMALL_NUMBER.getValue())
-					|| property.getType().equals(PropertyTypeEnum.LONG_NUMBER.getValue())
-					|| (searchDocuments && property.getType().equals(PropertyTypeEnum.MULTI_TEXT.getValue()))) {
+					|| property.getType().equals(PropertyTypeEnum.LONG_NUMBER.getValue())) {
 				InputText inputText = new InputText();
 				inputText.setId(property.getSymbolicName());
 				inputText.setStyle(InputsStyles.INPUT_TEXT_STYLE);
@@ -176,25 +158,18 @@ public class UIUtils {
 						|| property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
 
 					if (property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
-						if (!searchDocuments) {
-							inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME,
-									InputsDataTypes.HIJRI_DATE);
-							inputText.setStyleClass(InputsStyles.HIJRI_DATE_STYLE_CLASS);
-							// inputText.setReadonly(true);
-						} else {
-							propertiesPanelGrid.getChildren().add(createHijriDateSearchInputs(property));
-						}
+
+						inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME,
+								InputsDataTypes.HIJRI_DATE);
+						inputText.setStyleClass(InputsStyles.HIJRI_DATE_STYLE_CLASS);
+
 					}
 
 					if (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())) {
-						if (!searchDocuments) {
-							inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME,
-									InputsDataTypes.GREG_DATE);
-							inputText.setStyleClass(InputsStyles.GREG_DATE_STYLE_CLASS);
-							// inputText.setReadonly(true);
-						} else {
-							propertiesPanelGrid.getChildren().add(createGregDateSearchInputs(property));
-						}
+
+						inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME,
+								InputsDataTypes.GREG_DATE);
+						inputText.setStyleClass(InputsStyles.GREG_DATE_STYLE_CLASS);
 					}
 
 				} else {
@@ -208,10 +183,7 @@ public class UIUtils {
 				}
 
 				uiInput = inputText;
-				if (((searchDocuments) && (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())
-						|| property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue()))) || makeUIInputNull) {
-					uiInput = null;
-				}
+
 			}
 
 			if (property.getType().equals(PropertyTypeEnum.LONG_TEXT.getValue())) {
@@ -235,14 +207,10 @@ public class UIUtils {
 			if (uiInput != null) {
 				// validation
 
-				// integer validation,illegal string validator,custom
-				// validations (year,commercial record) in (search,add,edit)
 				if (property.getType().equals(PropertyTypeEnum.SMALL_NUMBER.getValue())
 						&& (!property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())
 								&& !property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue()))) {
-					// ECMLogger.debugStatic("########### ADDINF INTEGER
-					// CONVERTER FOR: "+property.getSymbolicName());
-					String converterMessage = ("validation.numberOnly");
+					String converterMessage = "الحقل " + property.getDisplayNameArabic() + " يقبل أرقام فقط";
 					uiInput.setConverter(createIntegerConverter());
 					uiInput.setConverterMessage(converterMessage);
 				}
@@ -250,34 +218,25 @@ public class UIUtils {
 				if (property.getType().equals(PropertyTypeEnum.LONG_NUMBER.getValue())
 						&& !property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())
 						&& !property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())) {
-					// ECMLogger.debugStatic("########### ADDINF FLOAT CONVERTER
-					// FOR: "+property.getSymbolicName());
-					String converterMessage = ("validation.numberOnly");
+					String converterMessage = "الحقل " + property.getDisplayNameArabic() + " يقبل أرقام فقط";
 					uiInput.setConverter(createLongConverter());
 					uiInput.setConverterMessage(converterMessage);
-				}
-
-				if (property.getType().equals(PropertyTypeEnum.SMALL_TEXT.getValue())
-						|| property.getType().equals(PropertyTypeEnum.LONG_TEXT.getValue())) {
-					// uiInput.addValidator(createValidator("STRING_VALIDATOR_ID"));
 				}
 
 				addCustomValidations(property, uiInput);
 
 				// required validation,too much text validation in (add,edit)
-				if (!searchDocuments) {
-					// required validation
-					String requiredMessage = "الحقل " + property.getDisplayNameArabic() + " إجباري";
-					uiInput.setRequired(property.isRequired());
-					uiInput.setRequiredMessage(requiredMessage);
-					// too much text validation
-					if (property.getType().equals(PropertyTypeEnum.LONG_TEXT.getValue())) {
-						String tooMuchDataMessage = "النص المدخل كبير...يجب أن لا يتجاوز عدد الحروف : "
-								+ property.getMaxLength();
-						uiInput.addValidator(createLengthValidator(property.getMaxLength()));
-						uiInput.setValidatorMessage(tooMuchDataMessage);
-					}
 
+				// required validation
+				String requiredMessage = "الحقل " + property.getDisplayNameArabic() + " إجباري";
+				uiInput.setRequired(property.isRequired());
+				uiInput.setRequiredMessage(requiredMessage);
+				// too much text validation
+				if (property.getType().equals(PropertyTypeEnum.LONG_TEXT.getValue())) {
+					String tooMuchDataMessage = "النص المدخل كبير...يجب أن لا يتجاوز عدد الحروف : "
+							+ property.getMaxLength();
+					uiInput.addValidator(createLengthValidator(property.getMaxLength()));
+					uiInput.setValidatorMessage(tooMuchDataMessage);
 				}
 
 				// setting property value,adding input to panelGrid
@@ -287,13 +246,115 @@ public class UIUtils {
 			}
 		} // end of properties for loop
 
-		if (addDocument) {
-			// used in display document after integration search
-			// addDisplayDocumentFields(propertiesPanelGrid);
+	}
+
+	public static void generatePropertiesInputsForSearch(List<Property> properties, HtmlPanelGrid propertiesPanelGrid,
+			Locale locale, User currentUser) throws Exception {
+
+		propertiesPanelGrid.getChildren().clear();
+
+		if (propertiesPanelGrid != null) {
+			propertiesPanelGrid.setId(propertiesPanelGridId);
 		}
 
-		// setting tab index
-		// setTabIndexForPropertiesInputs(propertiesPanelGrid);
+		UIInput uiInput = null; // UIInput is set to null in search and property
+								// is hijriDate
+
+		for (Property property : properties) {
+
+			if (property == null)
+				continue;
+
+			HtmlOutputLabel label = new HtmlOutputLabel();
+			label.setStyle(InputsStyles.LABEL_STYLE);
+			label.setValue(property.getDisplayNameArabic());
+
+			propertiesPanelGrid.getChildren().add(label);
+
+			if (property.getType().equals(PropertyTypeEnum.SMALL_TEXT.getValue())
+					|| property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())
+					|| property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())
+					|| property.getType().equals(PropertyTypeEnum.SMALL_NUMBER.getValue())
+					|| property.getType().equals(PropertyTypeEnum.LONG_NUMBER.getValue())
+					|| property.getType().equals(PropertyTypeEnum.MULTI_TEXT.getValue())) {
+				InputText inputText = new InputText();
+				inputText.setId(property.getSymbolicName());
+				inputText.setStyle(InputsStyles.INPUT_TEXT_STYLE);
+				if (property.getMaxLength() != 0) {
+					inputText.setMaxlength(property.getMaxLength());
+				}
+
+				if (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())
+						|| property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
+
+					if (property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
+						propertiesPanelGrid.getChildren().add(createHijriDateSearchInputs(property));
+					}
+
+					if (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())) {
+						propertiesPanelGrid.getChildren().add(createGregDateSearchInputs(property));
+					}
+
+				} else {
+					if (property.getType().equals(PropertyTypeEnum.SMALL_NUMBER.getValue()))
+						inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME,
+								InputsDataTypes.INTEGER);
+					else if (property.getType().equals(PropertyTypeEnum.LONG_NUMBER.getValue()))
+						inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.LONG);
+					else
+						inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.STRING);
+				}
+
+				uiInput = inputText;
+				if (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())
+						|| property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
+					uiInput = null;
+				}
+			}
+
+			if (property.getType().equals(PropertyTypeEnum.LONG_TEXT.getValue())) {
+				InputTextarea inputTextArea = new InputTextarea();
+				inputTextArea.setId(property.getSymbolicName());
+				inputTextArea.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.STRING);
+				inputTextArea.setStyle(InputsStyles.INPUT_TEXT_AREA_STYLE);
+				uiInput = inputTextArea;
+			}
+
+			if (property.getType().equals(PropertyTypeEnum.NORMAL_CHOICELIST.getValue())
+					|| property.getType().equals(PropertyTypeEnum.MAIN_CHOICELIST.getValue())
+					|| property.getType().equals(PropertyTypeEnum.SUB_CHOICELIST.getValue())) {
+				if (property.getType().equals(PropertyTypeEnum.MAIN_CHOICELIST.getValue())
+						|| property.getType().equals(PropertyTypeEnum.NORMAL_CHOICELIST.getValue())) {
+					SelectOneMenu selectOneMenu = createSelectOneMenu(property, true, properties, propertiesPanelGrid);
+					uiInput = selectOneMenu;
+				}
+			}
+
+			if (uiInput != null) {
+
+				if (property.getType().equals(PropertyTypeEnum.SMALL_NUMBER.getValue())
+						&& (!property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())
+								&& !property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue()))) {
+
+					String converterMessage = "الحقل " + property.getDisplayNameArabic() + " يقبل أرقام فقط";
+					uiInput.setConverter(createIntegerConverter());
+					uiInput.setConverterMessage(converterMessage);
+				}
+
+				if (property.getType().equals(PropertyTypeEnum.LONG_NUMBER.getValue())
+						&& !property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())
+						&& !property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())) {
+
+					String converterMessage = "الحقل " + property.getDisplayNameArabic() + " يقبل أرقام فقط";
+					uiInput.setConverter(createLongConverter());
+					uiInput.setConverterMessage(converterMessage);
+				}
+
+				uiInput.setValue(property.getValue());
+				uiInput.getAttributes().put("title", label.getValue());
+				propertiesPanelGrid.getChildren().add(uiInput);
+			}
+		} // end of properties for loop
 
 	}
 

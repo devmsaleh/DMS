@@ -31,7 +31,6 @@ import com.dms.entities.Property;
 import com.dms.enums.CustomColumnsEnum;
 import com.dms.enums.PropertyTypeEnum;
 import com.dms.service.DocumentClassService;
-import com.dms.util.Constants;
 import com.dms.util.CustomFileUtils;
 import com.dms.util.GeneralUtils;
 import com.dms.util.UIUtils;
@@ -87,8 +86,8 @@ public class AddDocumentBean implements Serializable {
 	public void documentClassChanged() {
 		try {
 			selectedDocumentClass = documentClassService.findWithPropertiesAndChoiceListItems(selectedDocumentClassId);
-			UIUtils.generatePropertiesInputs(selectedDocumentClass.getPropertiesList(), propertiesPanelGrid,
-					localeBean.getLocale(), Constants.OPERATION_ADD_DOCUMENT, currentUserBean.getUser());
+			UIUtils.generatePropertiesInputsForAdd(selectedDocumentClass.getPropertiesList(), propertiesPanelGrid,
+					localeBean.getLocale(), currentUserBean.getUser());
 		} catch (Exception e) {
 			PrimeFaces.current().ajax().addCallbackParam("errorDialog", true);
 			log.error("Exception in documentClassChanged", e);

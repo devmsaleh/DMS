@@ -91,21 +91,22 @@
 					  <h:panelGroup layout="block" id="documentsDiv">
 						  <p:dataTable emptyMessage=""   id="documentsTable" var="document" rendered="#{searchDocumentBean.renderSearchTable}" 
 						  value="#{searchDocumentBean.documentsList}"  widgetVar="documentsTableWidget" rowIndexVar="index" rowKey="#{document.id}">
-							  <p:columns value="#{searchDocumentBean.columns}" var="column" columnIndexVar="colIndex" 
+							  <p:columns value="#{searchDocumentBean.columns}"  var="column" id="column#{colIndex+1}" columnIndexVar="colIndex" 
 				              sortBy="#{document.customPropValues[column.property]}" style="#{column.style}" styleClass="#{column.styleClass}">
 								<f:facet name="header">
 									<h:outputText value="#{column.header}" />
 								</f:facet>
 								<h:outputText rendered="#{column.textOnly}" value="#{document.customPropValues[column.property]}" />
-							    <h:panelGrid  columnClasses="noBorder,noBorder,noBorder" columns="3" rendered="#{!column.textOnly}">
-							       <p:graphicImage id="img"  name="images/thumbnail.png" library="omega-layout" style="cursor:pointer" title="Custom Options" rendered="#{document.mimeType.indexOf('image') != -1}"/>		       
-							       <p:button icon="ui-icon-search" value="استعراض" onclick="openImageViewer('#{document.id}','#{document.mimeType}');return false;"/>						       							       
-							       <p:button value="تحميل"
-													href="#{request.contextPath}/viewer?id=#{document.id}&amp;mode=download"
-													icon="fa fa-download">
-									</p:button>
+							    <h:panelGrid id="actionsTable"  columnClasses="noBorder,noBorder,noBorder" columns="3" rendered="#{!column.textOnly}">
+							       <p:graphicImage id="img"  name="images/thumbnail.png" library="omega-layout" style="cursor:pointer;width:35px;height:35px;" title="Custom Options" rendered="#{document.mimeType.indexOf('image') != -1}"/>		       
+							       <p:button icon="ui-icon-search" rendered="#{document.mimeType.indexOf('image') != -1 or document.mimeType.indexOf('pdf') != -1}" style="width:35px;height:35px" onclick="openImageViewer('#{document.id}','#{document.mimeType}');return false;"/>						       							       
+							       <p:button style="width:35px;height:35px"
+											 href="#{request.contextPath}/viewer?id=#{document.id}&amp;mode=download"
+											 icon="fa fa-download">
+								   </p:button>
 							    </h:panelGrid>
-							    <p:overlayPanel my="right center" at="right center"  dynamic="true" id="imgPanel" for="img" showEffect="blind"  hideEffect="explode" showEvent="mouseover" 
+							    <p:overlayPanel id="imgPanel" rendered="#{document.mimeType.indexOf('image') != -1}" 
+							    my="right center" at="right center"  dynamic="true"  for="img" showEffect="blind"  hideEffect="explode" showEvent="mouseover" 
 								                    dismissable="true" showCloseIcon="true">
 								        <p:graphicImage cache="true" width="400" height="400"  value="/viewer?id=#{document.id}" />
 								</p:overlayPanel>

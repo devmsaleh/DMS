@@ -35,6 +35,8 @@ public class CurrentUserBean implements Serializable {
 
 	private boolean admin;
 
+	private boolean startTimer;
+
 	@PostConstruct
 	public void init() {
 		try {
@@ -42,6 +44,18 @@ public class CurrentUserBean implements Serializable {
 		} catch (Exception e) {
 			log.error("Exception in init CurrentUserBean", e);
 		}
+	}
+
+	public void extendSession() {
+		startTimer = false;
+	}
+
+	public void onIdleScreen() {
+		startTimer = true;
+	}
+
+	public void onActiveScreen() {
+		startTimer = false;
 	}
 
 	private void loadUserData() {
@@ -88,6 +102,14 @@ public class CurrentUserBean implements Serializable {
 
 	public void setAdmin(boolean admin) {
 		this.admin = admin;
+	}
+
+	public boolean isStartTimer() {
+		return startTimer;
+	}
+
+	public void setStartTimer(boolean startTimer) {
+		this.startTimer = startTimer;
 	}
 
 }
