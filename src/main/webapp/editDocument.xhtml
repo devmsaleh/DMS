@@ -3,7 +3,7 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
-                template="/WEB-INF/template.xhtml">
+                template="/WEB-INF/templatePopup.xhtml">
 
     <ui:define name="head">
         <style>
@@ -27,7 +27,7 @@
 		<script src="#{request.contextPath}/resources/js/calendar/jquery.calendars.ummalqura.js"></script>
 		<script src="#{request.contextPath}/resources/js/calendar/jquery.calendars.ummalqura-ar.js"></script>
     </ui:define>
-    <ui:define name="title">إدخال الملفات</ui:define>
+    <ui:define name="title">تعديل الوثيقة</ui:define>
     <ui:define name="content">
         <div class="ui-g">
             <div class="ui-g-12">
@@ -37,60 +37,15 @@
                 </p:growl>
                 
                   <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-	                  <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-		                    <p:outputLabel value="اسم التصنيف"/>
-		                    <p:selectOneMenu id="documentClassesList" value="#{addDocumentBean.selectedDocumentClassId}">
-									<f:selectItems value="#{addDocumentBean.documentClassesList}" var="documentClass"
-									itemLabel="#{documentClass.displayNameArabic}" itemValue="#{documentClass.id}" />									
-						    <p:ajax listener="#{addDocumentBean.documentClassChanged}" update="propertiesTable" onstart="PF('statusDialog').show();" 
-			                   oncomplete="submitCallback(xhr, status, args);"/>
-						    </p:selectOneMenu> 
-					  </p:panelGrid>
+	                  
 						    
 	                  <p:panelGrid id="propertiesTable" columns="2" columnClasses="inputsColumnAdd,uploadFileColumn" styleClass="ui-panelgrid-blank">
-	                     <h:panelGrid id="inputs" columns="2" binding="#{addDocumentBean.propertiesPanelGrid}"></h:panelGrid>
-	                     <p:panelGrid columns="1" style="width:70%" styleClass="ui-panelgrid-blank ui-g-5">
-	                         <p:fileUpload widgetVar="fileUpload" id="fileUpload"  uploadLabel=""  cancelLabel="" label="اختر الملفات"  
-						       onstart="PF('statusDialog').show();"
-						       oncomplete="PF('statusDialog').hide();"
-						       mode="advanced" auto="true" 
-						       multiple="true"  immediate="true" 
-	                           listener="#{addDocumentBean.handleFileUpload}"
-	                           update="filesTable" />
-	                          <h:panelGroup layout="block" id="filesTable">
-	                               <p:dataTable rowIndexVar="index" emptyMessage="لم يتم اختيار ملفات" 
-	                               var="file" value="#{addDocumentBean.filesList}"
-	                               rows="5" 
-	                               paginatorPosition="bottom"
-	                               paginator="#{addDocumentBean.filesList.size() > 5}"
-	                               paginatorTemplate="{CurrentPageReport} {PageLinks}"
-                                   currentPageReportTemplate="{currentPage} من {totalPages}">
-									    <f:facet name="header">
-									        إجمالى عدد الملفات : #{addDocumentBean.filesList.size()}
-									    </f:facet>
-									    <p:column style="text-align:center" width="50" headerText="م">
-									      #{index+1}
-									    </p:column>
-									    <p:column style="text-align:center" headerText="اسم الملف">
-									        <h:outputText value="#{file.originalFileName}" />
-									    </p:column>
-									    
-									    <p:column headerText="" width="50" style="text-align:center;">
-									        <p:commandButton  immediate="true"  action="#{addDocumentBean.removeAttachment(index)}"  
-									        onstart="PF('statusDialog').show();"  oncomplete="PF('statusDialog').hide();"
-									        update=":form:filesTable"  icon="ui-icon-close">
-									          <p:confirm header="تأكيد" message="هل تريد حذف الملف #{file.originalFileName} ؟" icon="pi pi-exclamation-triangle" />
-									        </p:commandButton>
-									    </p:column>
-							    									 
-								  </p:dataTable>
-	                          </h:panelGroup>   
-	                     </p:panelGrid>
+	                     <h:panelGrid id="inputs" columns="2" binding="#{editDocumentBean.propertiesPanelGrid}"></h:panelGrid>	                     
 	                  </p:panelGrid>
 	                  
 	                  <p:commandButton					   
 							   value="حفظ الوثيقة"  style="margin-top:10px;"
-							   action="#{addDocumentBean.createNewDocument}"
+							   action="#{editDocumentBean.updateDocument}"
 							   update="propertiesTable" 
 							   onstart="PF('statusDialog').show();" 
 			                   oncomplete="PF('statusDialog').hide();" >					  

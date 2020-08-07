@@ -58,8 +58,8 @@
 							   <p:selectOneMenu  value="#{currentUserBean.selectedCountryId}" autoWidth="false" required="true" requiredMessage="من فضلك قم باختيار الدولة">
 									<f:selectItem itemLabel="اختر الدولة" itemValue="" noSelectionOption="true"/>
 								    <f:selectItems var="country" value="#{currentUserBean.countriesList}" itemLabel="#{country.name}" itemValue="#{country.id}" />
-					                <p:ajax onstart="PF('loadingDialogWidget').show();" onerror="PF('loadingDialogWidget').hide();" 
-						               oncomplete="PF('loadingDialogWidget').hide();" listener="#{currentUserBean.loadCities}" update="cities"/>
+					                <p:ajax onstart="PF('statusDialog').show();" onerror="PF('statusDialog').hide();" 
+						               oncomplete="PF('statusDialog').hide();" listener="#{currentUserBean.loadCities}" update="cities"/>
 							    </p:selectOneMenu>
 							    
 								<p:selectOneMenu id="cities" value="#{currentUserBean.selectedCityId}" autoWidth="false" required="true" requiredMessage="من فضلك قم باختيار المدينة">
@@ -75,7 +75,7 @@
 							</p:panelGrid>
 							
 							<h:panelGroup id="button" layout="block" style="text-align:center">
-								  <p:commandButton  action="#{currentUserBean.search}" onstart="PF('loadingDialogWidget').show();" oncomplete="if (args &amp;&amp; args.validationFailed) PF('loadingDialogWidget').hide();"   value="بحث"   icon="ui-icon-check" /> 
+								  <p:commandButton  action="#{currentUserBean.search}" onstart="PF('statusDialog').show();" oncomplete="if (args &amp;&amp; args.validationFailed) PF('statusDialog').hide();"   value="بحث"   icon="ui-icon-check" /> 
 							</h:panelGroup>
 						
 					</p:fieldset>

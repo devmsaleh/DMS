@@ -31,7 +31,7 @@
 			  
 			  <p:commandButton 
 			  value="إنشاء تصنيف جديد" action="#{manageDocumentClassesBean.createNewDocumentClass}" styleClass="buttonClass" 			  
-			  onstart="PF('loadingDialogWidget').show();" 
+			  onstart="PF('statusDialog').show();" 
 			  oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){PF('addNewClassDialogWidget').hide();}" 
 			  update=":form:tabs:documentClassesList :form:tabs:propertiesTable"> 
 			  </p:commandButton>
@@ -76,7 +76,7 @@
 			  
 			  <p:commandButton 
 			  value="إضافة" action="#{manageDocumentClassesBean.createNewProperty}" 			  
-			  onstart="PF('loadingDialogWidget').show();" 
+			  onstart="PF('statusDialog').show();" 
 			  oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){PF('addNewPropertyDialogWidget').hide();}" 
 			  update="addNewPropertyDialog :form:tabs:propertiesTable"> 
 			  </p:commandButton>

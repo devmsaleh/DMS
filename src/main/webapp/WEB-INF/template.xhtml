@@ -20,7 +20,7 @@
 
         <script>
         function submitCallback(xhr, status, args) {
-           PF('loadingDialogWidget').hide();
+           PF('statusDialog').hide();
            if(args.validationFailed){
 				 return;
 		   }
@@ -105,8 +105,10 @@
         </p:ajaxStatus>
         
         <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
-		    <p:graphicImage name="images/preloader.gif" library="omega-layout" style="width: 32px;"/>
+		    <p:graphicImage value="resources/images/ajaxloadingbar.gif" />
 		</p:dialog>
+		
+		
         
         <h:outputStylesheet name="css/animate.css" library="omega-layout" />
         <h:outputStylesheet name="css/nanoscroller.css" library="omega-layout" />

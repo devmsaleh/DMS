@@ -80,6 +80,7 @@ public class AddDocumentBean implements Serializable {
 			}
 		} catch (Exception e) {
 			log.error("Exception in init AddDocumentBean", e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -89,8 +90,8 @@ public class AddDocumentBean implements Serializable {
 			UIUtils.generatePropertiesInputsForAdd(selectedDocumentClass.getPropertiesList(), propertiesPanelGrid,
 					localeBean.getLocale(), currentUserBean.getUser());
 		} catch (Exception e) {
-			PrimeFaces.current().ajax().addCallbackParam("errorDialog", true);
 			log.error("Exception in documentClassChanged", e);
+			GeneralUtils.showSystemErrorDialog();
 		}
 	}
 

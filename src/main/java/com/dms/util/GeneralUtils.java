@@ -215,6 +215,7 @@ public class GeneralUtils {
 			columns.append(",").append(CustomColumnsEnum.FILE_NAME.getValue());
 			columns.append(",").append(CustomColumnsEnum.ID.getValue());
 			columns.append(",").append(CustomColumnsEnum.DATE_CREATED.getValue());
+			columns.append(",").append(CustomColumnsEnum.UUID.getValue());
 			columns.append(",");
 		}
 
@@ -251,6 +252,15 @@ public class GeneralUtils {
 		String message = "حدث خطأ فى النظام...يرجى المحاولة مرة أخرى بعد قليل...واذا استمرت المشكلة يرجى الاتصال بالدعم الفني";
 		FacesContext.getCurrentInstance().validationFailed();
 		PrimeFaces.current().dialog().showMessageDynamic(new FacesMessage(FacesMessage.SEVERITY_FATAL, "خطأ", message));
+	}
+
+	public static void showDialogError(String message) {
+		PrimeFaces.current().dialog().showMessageDynamic(new FacesMessage(FacesMessage.SEVERITY_FATAL, "خطأ", message));
+	}
+
+	public static void showDialogInfo(String message) {
+		PrimeFaces.current().dialog()
+				.showMessageDynamic(new FacesMessage(FacesMessage.SEVERITY_INFO, "تنبيه", message));
 	}
 
 }

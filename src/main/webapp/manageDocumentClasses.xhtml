@@ -23,7 +23,7 @@
 		                    <p:selectOneMenu id="documentClassesList" value="#{manageDocumentClassesBean.selectedDocumentClassId}">
 									<f:selectItems value="#{manageDocumentClassesBean.documentClassesList}" var="documentClass"
 									itemLabel="#{documentClass.displayNameArabic}" itemValue="#{documentClass.id}" />									
-						    <p:ajax listener="#{manageDocumentClassesBean.documentClassChanged}" update="propertiesTable" onstart="PF('loadingDialogWidget').show();" 
+						    <p:ajax listener="#{manageDocumentClassesBean.documentClassChanged}" update="propertiesTable" onstart="PF('statusDialog').show();" 
 			                   oncomplete="submitCallback(xhr, status, args);"/>
 						    </p:selectOneMenu> 
 					    </p:panelGrid>
@@ -69,7 +69,7 @@
 		                        <p:inputText id="newChoiceListName" value="#{manageDocumentClassesBean.newChoiceList.displayNameArabic}"/>
 		                        <p:commandButton 
 								  value="إضافة" action="#{manageDocumentClassesBean.createNewChoiceList}" 			  
-								  onstart="PF('loadingDialogWidget').show();" 
+								  onstart="PF('statusDialog').show();" 
 								  oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){}" 
 								  update=":form:tabs:choiceLists :form:tabs:choiceListItemsPanel :form:tabs:newChoiceListName"> 
 								 </p:commandButton>
@@ -94,7 +94,7 @@
 		                        <p:inputText id="newItemName" value="#{manageDocumentClassesBean.newItemName}"/>
 		                        <p:commandButton 
 								  value="إضافة" action="#{manageDocumentClassesBean.createNewItem}" 			  
-								  onstart="PF('loadingDialogWidget').show();" 
+								  onstart="PF('statusDialog').show();" 
 								  oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){}" 
 								  update=":form:tabs:choiceListItemsTable :form:tabs:newItemName"> 
 								 </p:commandButton>

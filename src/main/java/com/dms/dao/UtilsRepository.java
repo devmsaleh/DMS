@@ -10,10 +10,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dms.entities.Document;
+import com.dms.entities.DocumentClass;
 import com.dms.entities.Property;
 import com.dms.enums.PropertyTypeEnum;
 import com.dms.util.Constants;
@@ -25,6 +29,11 @@ public class UtilsRepository {
 
 	@PersistenceContext
 	private EntityManager entityManager;
+
+	private static final Logger log = LoggerFactory.getLogger(UtilsRepository.class);
+
+	@Autowired
+	private DocumentRepository documentRepository;
 
 	public int createNewDocumentColumn(String documentTableName, String columnName, String dataType) {
 		Query query = entityManager
@@ -46,11 +55,33 @@ public class UtilsRepository {
 		return query.executeUpdate();
 	}
 
+	public Document findDocument(String documentId) {
+		Document documentOriginal = documentRepository.findByUuid(documentId);
+		log.info("######## findDocument,doucmentId: " + documentId + ",document: " + documentOriginal);
+		if (documentOriginal != null) {
+			DocumentClass documentClass = documentOriginal.getDocumentClass();
+			String whereCondition = " AND uuid='" + documentId + "'";
+			String columnNames = GeneralUtils.generateColumnsString(documentClass.getPropertiesList(),
+					Constants.OPERATION_SEARCH_DOCUMENTS);
+			List<Document> documentsList = findDocuments(documentClass.getTableName().getValue(),
+					documentClass.getPropertiesList(), whereCondition, columnNames, 1);
+			log.info("######## documentsList: " + documentsList.size());
+			if (documentsList.size() > 0) {
+				Document documentFinal = documentsList.get(0);
+				documentFinal.setDocumentClass(documentClass);
+				return documentFinal;
+			} else {
+				return null;
+			}
+		}
+		return null;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Document> findDocuments(String documentTableName, List<Property> propertiesList, String whereCondition,
 			String columnNames, int pageNumber) {
 
-		int numberOfSystemProperties = 7;
+		int numberOfSystemProperties = 8;
 		if (pageNumber > 0) {
 			pageNumber = pageNumber - 1;
 		}
@@ -75,6 +106,7 @@ public class UtilsRepository {
 			document.setFileName((String) dataArray[4]);
 			document.setId(((BigInteger) dataArray[5]).longValue());
 			document.setDateCreated((Date) dataArray[6]);
+			document.setUuid((String) dataArray[7]);
 			for (int i = 0; i < propertiesList.size(); i++) {
 				value = dataArray[i + numberOfSystemProperties];
 				if (propertiesList.get(i).getType().equalsIgnoreCase(PropertyTypeEnum.GREG_DATE.getValue())

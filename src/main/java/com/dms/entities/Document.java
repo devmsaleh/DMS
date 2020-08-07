@@ -3,6 +3,7 @@ package com.dms.entities;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,9 +35,16 @@ public class Document {
 	private Date dateCreated = new Date();
 	@OneToOne(fetch = FetchType.LAZY)
 	private DocumentClass documentClass;
-
 	@Transient
 	private Map<String, Object> customPropValues = new HashMap<String, Object>();
+
+	private String uuid = UUID.randomUUID().toString();
+
+	@OneToOne(fetch = FetchType.LAZY)
+	private User lastModifier;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateLastModified;
 
 	public DocumentClass getDocumentClass() {
 		return documentClass;
@@ -116,6 +124,30 @@ public class Document {
 
 	public void setCustomPropValues(Map<String, Object> customPropValues) {
 		this.customPropValues = customPropValues;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public User getLastModifier() {
+		return lastModifier;
+	}
+
+	public void setLastModifier(User lastModifier) {
+		this.lastModifier = lastModifier;
+	}
+
+	public Date getDateLastModified() {
+		return dateLastModified;
+	}
+
+	public void setDateLastModified(Date dateLastModified) {
+		this.dateLastModified = dateLastModified;
 	}
 
 }

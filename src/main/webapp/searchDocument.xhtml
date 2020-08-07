@@ -29,9 +29,7 @@
     		window.open(pageURL, '', features);   				
         }
         
-        function openImageViewer(documentId,documentMimeType){
-        	
-        	//alert("documentId: "+documentId+",documentMimeType: "+documentMimeType);
+        function openImageViewer(documentId,documentMimeType){        	
             var viewerUrl= 'viewer.xhtml?id='+documentId;
             var width= 1200;
 			var height= 650;
@@ -41,14 +39,16 @@
 				viewerUrl= 'viewerPDF.xhtml?id='+documentId+"&amp;t=pdf";
 				openWindow(viewerUrl,width,height,true);
 			}
-			
-			
-			
-		
         }
         
-        function downloadDocument(documentId){
-        				
+        function openEditDocument(documentId){      				
+			var viewerUrl= 'editDocument.xhtml?id='+documentId;
+			var width= 1200;
+			var height= 800;
+			openWindow(viewerUrl,width,height,true);	
+        }
+        
+        function downloadDocument(documentId){      				
 			var viewerUrl= 'viewer?id='+documentId+"&amp;mode=download";
 			var width= 100;
 			var height= 100;
@@ -71,7 +71,7 @@
 		                    <p:selectOneMenu id="documentClassesList" value="#{searchDocumentBean.selectedDocumentClassId}">
 									<f:selectItems value="#{searchDocumentBean.documentClassesList}" var="documentClass"
 									itemLabel="#{documentClass.displayNameArabic}" itemValue="#{documentClass.id}" />									
-						    <p:ajax listener="#{searchDocumentBean.documentClassChanged}" update="propertiesTable" onstart="PF('loadingDialogWidget').show();" 
+						    <p:ajax listener="#{searchDocumentBean.documentClassChanged}" update="propertiesTable" onstart="PF('statusDialog').show();" 
 			                   oncomplete="submitCallback(xhr, status, args);"/>
 						    </p:selectOneMenu> 
 					  </p:panelGrid>
@@ -84,7 +84,7 @@
 							   value="بحث"  style="margin-top:10px;"
 							   action="#{searchDocumentBean.search}"
 							   update="propertiesTable documentsDiv" 
-							   onstart="PF('loadingDialogWidget').show();" 
+							   onstart="PF('statusDialog').show();" 
 			                   oncomplete="submitCallback(xhr, status, args);" >					  
 					  </p:commandButton>
 					  
@@ -97,9 +97,14 @@
 									<h:outputText value="#{column.header}" />
 								</f:facet>
 								<h:outputText rendered="#{column.textOnly}" value="#{document.customPropValues[column.property]}" />
-							    <h:panelGrid id="actionsTable"  columnClasses="noBorder,noBorder,noBorder" columns="3" rendered="#{!column.textOnly}">
-							       <p:graphicImage id="img"  name="images/thumbnail.png" library="omega-layout" style="cursor:pointer;width:35px;height:35px;" title="Custom Options" rendered="#{document.mimeType.indexOf('image') != -1}"/>		       
+							    <h:panelGrid id="actionsTable"  columnClasses="noBorder,noBorder,noBorder,noBorder" columns="4" rendered="#{!column.textOnly}">
+							       <p:graphicImage id="img"  name="images/thumbnail.png" library="omega-layout" style="cursor:pointer;width:35px;height:35px;" title="صورة مصغرة" rendered="#{document.mimeType.indexOf('image') != -1}"/>		       
+							       <p:spacer rendered="#{document.mimeType.indexOf('image') == -1}"/>
+							       
 							       <p:button icon="ui-icon-search" rendered="#{document.mimeType.indexOf('image') != -1 or document.mimeType.indexOf('pdf') != -1}" style="width:35px;height:35px" onclick="openImageViewer('#{document.id}','#{document.mimeType}');return false;"/>						       							       
+							       <p:spacer rendered="#{document.mimeType.indexOf('image') == -1 and document.mimeType.indexOf('pdf') == -1}"/>
+							       
+							       <p:button icon="ui-icon-pencil" style="width:35px;height:35px" onclick="openEditDocument('#{document.uuid}');return false;"/>	
 							       <p:button style="width:35px;height:35px"
 											 href="#{request.contextPath}/viewer?id=#{document.id}&amp;mode=download"
 											 icon="fa fa-download">

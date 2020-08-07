@@ -415,3 +415,12 @@ a span.app-title {
 .noBorder{
 	text-align: center;
 }
+
+.ui-fileupload-content{
+             display:none !important;
+ }
+ 
+ .ui-fileupload-buttonbar{
+    background: transparent !important; 
+    border: none !important;
+ }

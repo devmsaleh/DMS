@@ -11,4 +11,6 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 	@Query("select fullPath from Document where id=:id")
 	String findDocumentPath(@Param("id") long id);
 
+	Document findByUuid(String uuid);
+
 }
