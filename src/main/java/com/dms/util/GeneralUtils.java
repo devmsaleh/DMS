@@ -204,25 +204,50 @@ public class GeneralUtils {
 		return sdf.format(new Date());
 	}
 
-	public static String generateColumnsString(List<Property> properties, String operationName) {
+	public static String generateColumnsStringForAdd(List<Property> properties) {
 		StringBuffer columns = new StringBuffer();
-
-		if (operationName != null && operationName.equalsIgnoreCase(Constants.OPERATION_SEARCH_DOCUMENTS)) {
-			columns.append(CustomColumnsEnum.FULL_PATH.getValue());
-			columns.append(",").append(CustomColumnsEnum.CONTENT_SIZE.getValue());
-			columns.append(",").append(CustomColumnsEnum.ORIGINAL_FILE_NAME.getValue());
-			columns.append(",").append(CustomColumnsEnum.MIME_TYPE.getValue());
-			columns.append(",").append(CustomColumnsEnum.FILE_NAME.getValue());
-			columns.append(",").append(CustomColumnsEnum.ID.getValue());
-			columns.append(",").append(CustomColumnsEnum.DATE_CREATED.getValue());
-			columns.append(",").append(CustomColumnsEnum.UUID.getValue());
-			columns.append(",");
-		}
 
 		for (int i = 0; i < properties.size(); i++) {
 			columns.append(properties.get(i).getColumnName());
-			if (i < properties.size() - 1)
+			if (i < properties.size() - 1) {
 				columns.append(",");
+			}
+		}
+
+		return columns.toString();
+	}
+
+	public static String generateColumnsStringForEdit(List<Property> properties) {
+		StringBuffer columns = new StringBuffer();
+		columns.append("set ");
+		for (int i = 0; i < properties.size(); i++) {
+			columns.append(properties.get(i).getColumnName()).append("=?");
+			if (i < properties.size() - 1) {
+				columns.append(",");
+			}
+		}
+
+		return columns.toString();
+	}
+
+	public static String generateColumnsStringForSearch(List<Property> properties) {
+		StringBuffer columns = new StringBuffer();
+
+		columns.append(CustomColumnsEnum.FULL_PATH.getValue());
+		columns.append(",").append(CustomColumnsEnum.CONTENT_SIZE.getValue());
+		columns.append(",").append(CustomColumnsEnum.ORIGINAL_FILE_NAME.getValue());
+		columns.append(",").append(CustomColumnsEnum.MIME_TYPE.getValue());
+		columns.append(",").append(CustomColumnsEnum.FILE_NAME.getValue());
+		columns.append(",").append(CustomColumnsEnum.ID.getValue());
+		columns.append(",").append(CustomColumnsEnum.DATE_CREATED.getValue());
+		columns.append(",").append(CustomColumnsEnum.UUID.getValue());
+		columns.append(",");
+
+		for (int i = 0; i < properties.size(); i++) {
+			columns.append(properties.get(i).getColumnName());
+			if (i < properties.size() - 1) {
+				columns.append(",");
+			}
 		}
 
 		return columns.toString();

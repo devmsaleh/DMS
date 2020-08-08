@@ -8,7 +8,6 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.component.html.HtmlPanelGrid;
@@ -29,7 +28,6 @@ import com.dms.entities.Attachment;
 import com.dms.entities.DocumentClass;
 import com.dms.entities.Property;
 import com.dms.enums.CustomColumnsEnum;
-import com.dms.enums.PropertyTypeEnum;
 import com.dms.service.DocumentClassService;
 import com.dms.util.CustomFileUtils;
 import com.dms.util.GeneralUtils;
@@ -103,27 +101,8 @@ public class AddDocumentBean implements Serializable {
 				return;
 			}
 
-			Map<String, Object> propertiesMap = UIUtils.getPropertiesInputsValues(propertiesPanelGrid,
-					selectedDocumentClass.getSymbolicName(), null);
-
-			for (Property property : selectedDocumentClass.getPropertiesList()) {
-				Object valueObj = propertiesMap.get(property.getSymbolicName());
-				if (valueObj != null && property.getType().equalsIgnoreCase(PropertyTypeEnum.MULTI_TEXT.getValue())) {
-					List<String> valuesList = (List<String>) valueObj;
-					System.out.println("######## list size: " + valuesList.size());
-					StringBuffer sb = new StringBuffer();
-					for (String str : valuesList) {
-						if (!str.startsWith("#")) {
-							str = "#" + str;
-						}
-						sb.append(str.trim());
-					}
-					valueObj = sb.toString();
-				}
-				if (valueObj != null) {
-					property.setValue(valueObj);
-				}
-			}
+			UIUtils.getPropertiesInputsValues(propertiesPanelGrid, selectedDocumentClass.getSymbolicName(),
+					selectedDocumentClass.getPropertiesList(), null);
 
 			for (Attachment attachment : filesList) {
 				doUploadFile(attachment);

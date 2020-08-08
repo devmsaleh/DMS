@@ -27,7 +27,6 @@ import com.dms.entities.DocumentClass;
 import com.dms.enums.CustomColumnsEnum;
 import com.dms.service.DocumentClassService;
 import com.dms.util.ColumnModel;
-import com.dms.util.Constants;
 import com.dms.util.GeneralUtils;
 import com.dms.util.UIUtils;
 
@@ -116,13 +115,16 @@ public class SearchDocumentBean implements Serializable {
 			documentsList = utilsRepository.findDocuments(selectedDocumentClass.getTableName().getValue(),
 					selectedDocumentClass.getPropertiesList(),
 					GeneralUtils.generateWhereStatementsString(propertiesWhereStatementsList),
-					GeneralUtils.generateColumnsString(selectedDocumentClass.getPropertiesList(),
-							Constants.OPERATION_SEARCH_DOCUMENTS),
-					1);
+					GeneralUtils.generateColumnsStringForSearch(selectedDocumentClass.getPropertiesList()), 1);
 			System.out.println("########### documentsList: " + documentsList.size());
 			renderSearchTable = documentsList.size() > 0;
 			if (documentsList.size() > 0)
 				columns = UIUtils.generateTableColumns(selectedDocumentClass.getPropertiesList());
+			List<String> resultUUIDList = new ArrayList<String>();
+			for (Document document : documentsList) {
+				resultUUIDList.add(document.getUuid());
+			}
+			currentUserBean.setResultUUIDList(resultUUIDList);
 			System.out.println("########### renderSearchTable: " + renderSearchTable);
 			System.out.println("########### columns: " + columns.size());
 		} catch (Exception e) {

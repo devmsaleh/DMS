@@ -17,7 +17,13 @@
         <title><ui:insert name="title"></ui:insert></title>
         <h:outputScript name="js/nanoscroller.js" library="omega-layout" />
         <h:outputScript name="js/layout.js" library="omega-layout" />
-
+ 
+        <style>
+          .wrapper .main {
+             margin-right: 0px !important;
+             padding: 0px 0px 0px 0px !important;
+           } 
+        </style>
         <script>
         function submitCallback(xhr, status, args) {
            PF('statusDialog').hide();

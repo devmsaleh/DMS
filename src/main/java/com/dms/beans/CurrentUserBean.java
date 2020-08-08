@@ -1,6 +1,8 @@
 package com.dms.beans;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -36,6 +38,8 @@ public class CurrentUserBean implements Serializable {
 	private boolean admin;
 
 	private boolean startTimer;
+
+	private List<String> resultUUIDList = new ArrayList<String>();
 
 	@PostConstruct
 	public void init() {
@@ -110,6 +114,14 @@ public class CurrentUserBean implements Serializable {
 
 	public void setStartTimer(boolean startTimer) {
 		this.startTimer = startTimer;
+	}
+
+	public List<String> getResultUUIDList() {
+		return resultUUIDList;
+	}
+
+	public void setResultUUIDList(List<String> resultUUIDList) {
+		this.resultUUIDList = resultUUIDList;
 	}
 
 }

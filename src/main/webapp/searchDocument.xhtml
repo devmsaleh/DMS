@@ -26,7 +26,11 @@
     		}else{
     		   features=features+',resizable=no';
     		}
-    		window.open(pageURL, '', features);   				
+    		var popup  = window.open(pageURL, '', features);   				
+            if(popup != null){
+            	popup.moveTo(0, 0);
+            	popup.resizeTo(screen.width, screen.height);
+            }
         }
         
         function openImageViewer(documentId,documentMimeType){        	
@@ -43,8 +47,8 @@
         
         function openEditDocument(documentId){      				
 			var viewerUrl= 'editDocument.xhtml?id='+documentId;
-			var width= 1200;
-			var height= 800;
+			var width= screen.availWidth;
+			var height= screen.availHeight;
 			openWindow(viewerUrl,width,height,true);	
         }
         

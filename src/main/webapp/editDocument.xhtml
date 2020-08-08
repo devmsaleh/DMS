@@ -3,6 +3,7 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/WEB-INF/templatePopup.xhtml">
 
     <ui:define name="head">
@@ -15,6 +16,10 @@
              background: transparent !important; 
              border: none !important;
           }
+          
+          .openseadragon-container{
+             border: 1px solid black !important;
+          }
         </style>
         <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
 		<h:outputScript target="head">
@@ -26,30 +31,89 @@
         <script src="#{request.contextPath}/resources/js/calendar/jquery.calendars.picker.js"></script>
 		<script src="#{request.contextPath}/resources/js/calendar/jquery.calendars.ummalqura.js"></script>
 		<script src="#{request.contextPath}/resources/js/calendar/jquery.calendars.ummalqura-ar.js"></script>
+        <script src="#{request.contextPath}/resources/openseadragon/openseadragon.min.js"></script>
     </ui:define>
     <ui:define name="title">تعديل الوثيقة</ui:define>
     <ui:define name="content">
         <div class="ui-g">
             <div class="ui-g-12">
                 <h:form id="form" enctype="multipart/form-data">
-                <p:growl id="messages" showDetail="false" escape="false">
+                <p:growl id="messages" life="800" showDetail="false" escape="false">
                    <p:autoUpdate />
                 </p:growl>
                 
-                  <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-	                  
-						    
+                  <p:panelGrid id="mainTable" columns="1" styleClass="ui-panelgrid-blank">
+  
 	                  <p:panelGrid id="propertiesTable" columns="2" columnClasses="inputsColumnAdd,uploadFileColumn" styleClass="ui-panelgrid-blank">
-	                     <h:panelGrid id="inputs" columns="2" binding="#{editDocumentBean.propertiesPanelGrid}"></h:panelGrid>	                     
+	                     <h:panelGrid columns="1">
+	                        <h:panelGrid id="inputs" columns="2" binding="#{editDocumentBean.propertiesPanelGrid}"></h:panelGrid>	                     
+					        <p:commandButton					   
+									   value="حفظ الوثيقة"  style="margin-top:10px;"
+									   action="#{editDocumentBean.updateDocument}"
+									   update="form" 
+									   onstart="PF('statusDialog').show();" 
+					                   oncomplete="PF('statusDialog').hide();" >					  
+							 </p:commandButton>
+					     </h:panelGrid>
+					     <h:panelGroup id="imageViewer" layout="block" rendered="#{editDocumentBean.document != null and editDocumentBean.document.mimeType.indexOf('image') != -1}">
+						     <h:panelGroup id="loading" layout="block" style="width: 500px; margin:0 auto">
+							   <p:graphicImage id="loadingImage" name="images/preloader.gif" library="omega-layout" style="top: 150px; position: absolute; z-index: 500000;"/>
+							 </h:panelGroup>		
+							 <h:panelGroup layout="block">
+							   <div id="tilesource-collection" style="width: 600px; height: 600px;"></div>
+							 </h:panelGroup>
+						 </h:panelGroup>
+						 <pe:documentViewer id="documentViewer" width="800"  height="600" url="/viewer?id=#{editDocumentBean.document.id}" rendered="#{editDocumentBean.document != null and editDocumentBean.document.mimeType.indexOf('pdf') != -1}"/> 
+	                     <script type="text/javascript">
+						 //<![CDATA[
+						    
+						    var urls = #{editDocumentBean.filesListAsJson};
+						    if(urls!= null && urls !=''){
+
+							    var tileSources = urls.map(function(url) {
+							        return {
+							          url: url,
+							          type: 'image'
+							        };
+							    });
+						
+						
+							    var viewer = OpenSeadragon({
+							        id: "tilesource-collection",
+							        prefixUrl: "/dms/resources/openseadragon/images/",
+							        sequenceMode: true,
+							        tileSources: tileSources
+							    });
+						    
+						        showLoading();
+						    
+							    viewer.addHandler('open', function() {		    	  
+							    	  var tiledImage = viewer.world.getItemAt(0); // Assuming you just have a single image in the viewer
+							    	  if (tiledImage.getFullyLoaded()) {
+							    		    hideLoading();
+							    		  } else {
+							    		    tiledImage.addOnceHandler('fully-loaded-change', hideLoading);
+							          }
+							    	  var targetZoom = tiledImage.source.dimensions.x / viewer.viewport.getContainerSize().x;
+							    	  viewer.viewport.zoomTo(targetZoom, null, true);
+							    	  
+							    	});
+						    
+						    }
+						
+						    function showLoading(){
+						        
+						    }
+						    
+						    function hideLoading(){
+						    	document.getElementById('form:loading').style.display='none';
+						    }
+						
+						//]]>
+						</script>
 	                  </p:panelGrid>
 	                  
-	                  <p:commandButton					   
-							   value="حفظ الوثيقة"  style="margin-top:10px;"
-							   action="#{editDocumentBean.updateDocument}"
-							   update="propertiesTable" 
-							   onstart="PF('statusDialog').show();" 
-			                   oncomplete="PF('statusDialog').hide();" >					  
-					  </p:commandButton>
+	                  
                   </p:panelGrid>
                 
                   <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

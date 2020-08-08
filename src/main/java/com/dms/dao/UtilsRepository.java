@@ -20,7 +20,6 @@ import com.dms.entities.Document;
 import com.dms.entities.DocumentClass;
 import com.dms.entities.Property;
 import com.dms.enums.PropertyTypeEnum;
-import com.dms.util.Constants;
 import com.dms.util.GeneralUtils;
 
 @Repository
@@ -42,10 +41,23 @@ public class UtilsRepository {
 	}
 
 	public int insertDocument(String documentTableName, List<Property> properties) {
-		String columns = GeneralUtils.generateColumnsString(properties, Constants.OPERATION_ADD_DOCUMENT);
+		String columns = GeneralUtils.generateColumnsStringForAdd(properties);
 		String values = generateValuesString(properties);
 		String queryStr = "insert into " + documentTableName + " (" + columns + ")" + " values(" + values + ")";
 		System.out.println("########## queryStr: " + queryStr);
+		Query query = entityManager.createNativeQuery(queryStr);
+		for (int i = 0; i < properties.size(); i++) {
+			System.out.println("######## setting " + properties.get(i).getDisplayNameArabic() + "("
+					+ properties.get(i).getColumnName() + ")" + " with value: " + properties.get(i).getValue());
+			query.setParameter(i + 1, properties.get(i).getValue());
+		}
+		return query.executeUpdate();
+	}
+
+	public int updateDocument(String documentTableName, List<Property> properties, Long documentId) {
+		String columns = GeneralUtils.generateColumnsStringForEdit(properties);
+		String queryStr = "update " + documentTableName + " " + columns + " where id=" + documentId;
+		System.out.println("########## updateDocument queryStr: " + queryStr);
 		Query query = entityManager.createNativeQuery(queryStr);
 		for (int i = 0; i < properties.size(); i++) {
 			System.out.println("######## setting " + properties.get(i).getDisplayNameArabic() + "("
@@ -61,8 +73,7 @@ public class UtilsRepository {
 		if (documentOriginal != null) {
 			DocumentClass documentClass = documentOriginal.getDocumentClass();
 			String whereCondition = " AND uuid='" + documentId + "'";
-			String columnNames = GeneralUtils.generateColumnsString(documentClass.getPropertiesList(),
-					Constants.OPERATION_SEARCH_DOCUMENTS);
+			String columnNames = GeneralUtils.generateColumnsStringForSearch(documentClass.getPropertiesList());
 			List<Document> documentsList = findDocuments(documentClass.getTableName().getValue(),
 					documentClass.getPropertiesList(), whereCondition, columnNames, 1);
 			log.info("######## documentsList: " + documentsList.size());

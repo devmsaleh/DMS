@@ -27,13 +27,11 @@
 		<div id="tilesource-collection" style="width: 800px; height: 600px;"></div>
 		<script type="text/javascript">
 		//<![CDATA[
-		    var images = {
-		        "77653384-9548-b9d6-e445-5861445d5dd2":{"tileurl":"/dms/resources/images/1.jpg"},
-		        "2724259a-6dca-8f5f-4e5d-d253d44a303c":{"tileurl":"/dms/resources/images/2.jpg"}
-		    };
 		    
-		    var urls = #{viewerBean.filesListAsJson}
-		    
+		    var urls = #{viewerBean.filesListAsJson};
+		    if(urls == null || urls == ''){
+		    	return;
+		    }
 		    var tileSources = urls.map(function(url) {
 		        return {
 		          url: url,

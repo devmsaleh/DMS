@@ -854,8 +854,9 @@ public class UIUtils {
 	 * @throws Exception
 	 */
 	public static Map<String, Object> getPropertiesInputsValues(HtmlPanelGrid propertiesPanelGrid,
-			String documentClassName, String documentId) throws Exception {
+			String documentClassName, List<Property> propertiesList, String documentId) throws Exception {
 
+		// documentId used for debugging only
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
 
 		for (UIComponent uiComponent : propertiesPanelGrid.getChildren()) {
@@ -868,6 +869,24 @@ public class UIUtils {
 						getPropertyNameAndValueFromUIInput(uiComponent2, documentClassName, documentId, propertiesMap);
 					}
 				}
+			}
+		}
+
+		for (Property property : propertiesList) {
+			Object valueObj = propertiesMap.get(property.getSymbolicName());
+			if (valueObj != null && property.getType().equalsIgnoreCase(PropertyTypeEnum.MULTI_TEXT.getValue())) {
+				List<String> valuesList = (List<String>) valueObj;
+				StringBuffer sb = new StringBuffer();
+				for (String str : valuesList) {
+					if (!str.startsWith("#")) {
+						str = "#" + str;
+					}
+					sb.append(str.trim());
+				}
+				valueObj = sb.toString();
+			}
+			if (valueObj != null) {
+				property.setValue(valueObj);
 			}
 		}
 

@@ -41,7 +41,7 @@ public class Document {
 	private String uuid = UUID.randomUUID().toString();
 
 	@OneToOne(fetch = FetchType.LAZY)
-	private User lastModifier;
+	private User lastModifiedBy;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateLastModified;
@@ -134,12 +134,12 @@ public class Document {
 		this.uuid = uuid;
 	}
 
-	public User getLastModifier() {
-		return lastModifier;
+	public User getLastModifiedBy() {
+		return lastModifiedBy;
 	}
 
-	public void setLastModifier(User lastModifier) {
-		this.lastModifier = lastModifier;
+	public void setLastModifiedBy(User lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
 	}
 
 	public Date getDateLastModified() {

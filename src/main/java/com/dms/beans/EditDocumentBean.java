@@ -3,6 +3,7 @@ package com.dms.beans;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -16,14 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.dms.dao.DocumentRepository;
 import com.dms.dao.UtilsRepository;
 import com.dms.entities.Document;
 import com.dms.entities.DocumentClass;
 import com.dms.entities.Property;
+import com.dms.enums.CustomColumnsEnum;
 import com.dms.enums.PropertyTypeEnum;
 import com.dms.util.GeneralUtils;
 import com.dms.util.UIUtils;
+import com.dms.util.ViewerUtils;
+import com.google.gson.Gson;
 
 @Component("editDocumentBean")
 @Scope("view")
@@ -40,9 +43,6 @@ public class EditDocumentBean implements Serializable {
 	private CurrentUserBean currentUserBean;
 
 	@Autowired
-	private DocumentRepository documentRepository;
-
-	@Autowired
 	private UtilsRepository utilsRepository;
 
 	private transient HtmlPanelGrid propertiesPanelGrid = new HtmlPanelGrid();
@@ -51,29 +51,45 @@ public class EditDocumentBean implements Serializable {
 
 	private Document document;
 
+	private List<String> filesList = new ArrayList<String>();
+
+	public String getFilesListAsJson() {
+		return new Gson().toJson(getFilesList());
+	}
+
 	@PostConstruct
 	public void init() {
 		try {
-			String documentId = GeneralUtils.getHttpServletRequest().getParameter("id");
-			log.info("####### INIT EditDocumentBean,documentId: " + documentId);
-			if (StringUtils.isBlank(documentId)) {
-				GeneralUtils.showDialogError("معرف الوثيقة غير موجود");
-				return;
-			}
-			document = utilsRepository.findDocument(documentId);
-			if (document == null) {
-				GeneralUtils.showDialogError("الوثيقة غير موجودة");
-				return;
-			}
-			selectedDocumentClass = document.getDocumentClass();
-			Map<String, Object> customPropertiesValues = document.getCustomPropValues();
-			log.info("########## customPropertiesValues: " + customPropertiesValues.size());
-			setPropertiesValues(selectedDocumentClass, customPropertiesValues);
-			UIUtils.generatePropertiesInputsForAdd(selectedDocumentClass.getPropertiesList(), propertiesPanelGrid,
-					localeBean.getLocale(), currentUserBean.getUser());
+			String documentUUID = GeneralUtils.getHttpServletRequest().getParameter("id");
+			loadDocument(documentUUID);
 		} catch (Exception e) {
 			log.error("Exception in init editDocumentBean", e);
 			throw new RuntimeException(e);
+		}
+	}
+
+	private void loadDocument(String documentUUID) throws Exception {
+
+		log.info("####### INIT EditDocumentBean,documentId: " + documentUUID);
+		filesList.clear();
+		document = null;
+		if (StringUtils.isBlank(documentUUID)) {
+			GeneralUtils.showDialogError("معرف الوثيقة غير موجود");
+			return;
+		}
+		document = utilsRepository.findDocument(documentUUID);
+		if (document == null) {
+			GeneralUtils.showDialogError("الوثيقة غير موجودة");
+			return;
+		}
+		selectedDocumentClass = document.getDocumentClass();
+		Map<String, Object> customPropertiesValues = document.getCustomPropValues();
+		log.info("########## customPropertiesValues: " + customPropertiesValues.size());
+		setPropertiesValues(selectedDocumentClass, customPropertiesValues);
+		UIUtils.generatePropertiesInputsForAdd(selectedDocumentClass.getPropertiesList(), propertiesPanelGrid,
+				localeBean.getLocale(), currentUserBean.getUser());
+		if (document.getMimeType().contains("image")) {
+			filesList = new ViewerUtils().doLoadImageIntoViewer(document);
 		}
 	}
 
@@ -100,9 +116,51 @@ public class EditDocumentBean implements Serializable {
 	public void updateDocument() {
 		try {
 			log.info("####### updateDocument #########");
+			UIUtils.getPropertiesInputsValues(propertiesPanelGrid, selectedDocumentClass.getSymbolicName(),
+					selectedDocumentClass.getPropertiesList(), null);
+
+			setCustomProperties();
+			utilsRepository.updateDocument(selectedDocumentClass.getTableName().getValue(),
+					selectedDocumentClass.getPropertiesList(), document.getId());
+			removeCustomProperties();
+
+			for (Property property : selectedDocumentClass.getPropertiesList()) {
+				property.setValue("");
+			}
+			UIUtils.clearPrpertiesInputs(propertiesPanelGrid);
+			filesList.clear();
+			GeneralUtils.addInfoMessage("تم الحفظ", null);
+			int index = currentUserBean.getResultUUIDList().indexOf(document.getUuid());
+			System.out.println("####### index: " + index + ",uuid: " + document.getUuid() + ",getResultUUIDList: "
+					+ currentUserBean.getResultUUIDList().size());
+			document = null;
+			if ((index + 1) != currentUserBean.getResultUUIDList().size()) {
+				String nextUUID = currentUserBean.getResultUUIDList().get(index + 1);
+				loadDocument(nextUUID);
+			} else {
+				propertiesPanelGrid.getChildren().clear();
+				GeneralUtils.showDialogError("تم تعديل جميع نتائج البحث");
+			}
 		} catch (Exception e) {
 			log.error("Exception in init updateDocument", e);
 			GeneralUtils.showSystemErrorDialog();
+		}
+	}
+
+	private void setCustomProperties() {
+		selectedDocumentClass.getPropertiesList()
+				.add(new Property(CustomColumnsEnum.LAST_MODIFIED_BY_ID.getValue(), currentUserBean.getUser().getId()));
+		selectedDocumentClass.getPropertiesList()
+				.add(new Property(CustomColumnsEnum.DATE_LAST_MODIFIED.getValue(), GeneralUtils.getCurrentTimeMYSQL()));
+	}
+
+	private void removeCustomProperties() {
+		for (Iterator<Property> iterator = selectedDocumentClass.getPropertiesList().iterator(); iterator.hasNext();) {
+			Property property = iterator.next();
+			if (property.getColumnName().equalsIgnoreCase(CustomColumnsEnum.LAST_MODIFIED_BY_ID.getValue())
+					|| property.getColumnName().equalsIgnoreCase(CustomColumnsEnum.DATE_LAST_MODIFIED.getValue())) {
+				iterator.remove();
+			}
 		}
 	}
 
@@ -128,6 +186,14 @@ public class EditDocumentBean implements Serializable {
 
 	public void setDocument(Document document) {
 		this.document = document;
+	}
+
+	public List<String> getFilesList() {
+		return filesList;
+	}
+
+	public void setFilesList(List<String> filesList) {
+		this.filesList = filesList;
 	}
 
 }
