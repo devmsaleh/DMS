@@ -3,12 +3,10 @@ package com.dms.beans;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
-import org.primefaces.model.StreamedContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +30,16 @@ public class ViewerBean implements Serializable {
 	@Autowired
 	private DocumentRepository documentRepository;
 
+	@Autowired
+	private CurrentUserBean currentUserBean;
+
 	private String downloadFileName = "untitled.pdf";
 
-	private StreamedContent content;
-
 	private List<String> filesList = new ArrayList<String>();
+
+	private boolean hideForm;
+
+	private Document document;
 
 	public String getFilesListAsJson() {
 		return new Gson().toJson(getFilesList());
@@ -46,20 +49,79 @@ public class ViewerBean implements Serializable {
 	public void init() {
 		System.out.println("####### viewerBean init ########");
 		try {
-			String id = GeneralUtils.getHttpServletRequest().getParameter("id");
-			System.out.println("###### doLoadDocument,id: " + id);
-			if (StringUtils.isBlank(id)) {
-				System.out.println("###### INVALID DOC ID #########");
-				return;
-			}
-			Optional<Document> documentOptional = documentRepository.findById(Long.parseLong(id));
-			Document document = documentOptional.get();
-			if (document == null)
-				return;
-			filesList = new ViewerUtils().doLoadImageIntoViewer(document);
+			String uuid = GeneralUtils.getHttpServletRequest().getParameter("uuid");
+			loadDocument(uuid);
 		} catch (Exception e) {
 			log.error("Exception in init ViewerBean", e);
 			throw new RuntimeException(e);
+		}
+	}
+
+	private void loadDocument(String uuid) throws Exception {
+
+		System.out.println("###### doLoadDocument,uuid: " + uuid);
+		filesList.clear();
+		document = null;
+		if (StringUtils.isBlank(uuid)) {
+			GeneralUtils.showDialogError("معرف الوثيقة غير موجود");
+			return;
+		}
+		document = documentRepository.findByUuid(uuid);
+		System.out.println("######### document: " + document);
+		if (document == null)
+			return;
+		System.out.println("######### document.getMimeType(): " + document.getMimeType());
+		if (document.getMimeType().contains("image")) {
+			filesList = new ViewerUtils().doLoadImageIntoViewer(document);
+			System.out.println("######### filesList after doLoadImageIntoViewer: " + filesList);
+		}
+	}
+
+	public boolean isNextEnabled() {
+		int index = currentUserBean.getResultUUIDList().indexOf(document.getUuid());
+		boolean enabled = (index + 1) != currentUserBean.getResultUUIDList().size();
+		System.out.println("########### isNextEnabled,index: " + index + ",enabled: " + enabled);
+		return enabled;
+	}
+
+	public boolean isPreviousEnabled() {
+		int index = currentUserBean.getResultUUIDList().indexOf(document.getUuid());
+		boolean enabled = (index - 1) > 0;
+		System.out.println("########### isPreviousEnabled,index: " + index + ",enabled: " + enabled);
+		return enabled;
+	}
+
+	public void next() {
+		try {
+			int index = currentUserBean.getResultUUIDList().indexOf(document.getUuid());
+			document = null;
+			if ((index + 1) != currentUserBean.getResultUUIDList().size()) {
+				String nextUUID = currentUserBean.getResultUUIDList().get(index + 1);
+				loadDocument(nextUUID);
+			} else {
+				hideForm = true;
+				GeneralUtils.showDialogError("تم استعراض جميع نتائج البحث");
+			}
+		} catch (Exception e) {
+			log.error("Exception in ViewerBean next", e);
+			GeneralUtils.showSystemErrorDialog();
+		}
+	}
+
+	public void previous() {
+		try {
+			int index = currentUserBean.getResultUUIDList().indexOf(document.getUuid());
+			document = null;
+			if ((index + -1) != currentUserBean.getResultUUIDList().size()) {
+				String prevUUID = currentUserBean.getResultUUIDList().get(index - 1);
+				loadDocument(prevUUID);
+			} else {
+				hideForm = true;
+				GeneralUtils.showDialogError("تم استعراض جميع نتائج البحث");
+			}
+		} catch (Exception e) {
+			log.error("Exception in ViewerBean previous", e);
+			GeneralUtils.showSystemErrorDialog();
 		}
 	}
 
@@ -77,6 +139,22 @@ public class ViewerBean implements Serializable {
 
 	public void setDownloadFileName(String downloadFileName) {
 		this.downloadFileName = downloadFileName;
+	}
+
+	public boolean isHideForm() {
+		return hideForm;
+	}
+
+	public void setHideForm(boolean hideForm) {
+		this.hideForm = hideForm;
+	}
+
+	public Document getDocument() {
+		return document;
+	}
+
+	public void setDocument(Document document) {
+		this.document = document;
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -38,6 +39,7 @@ public class Document {
 	@Transient
 	private Map<String, Object> customPropValues = new HashMap<String, Object>();
 
+	@Column(nullable = false, unique = true)
 	private String uuid = UUID.randomUUID().toString();
 
 	@OneToOne(fetch = FetchType.LAZY)

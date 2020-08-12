@@ -8,6 +8,7 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.faces.component.html.HtmlPanelGrid;
@@ -158,7 +159,6 @@ public class AddDocumentBean implements Serializable {
 			attachment.setOriginalFileName(uploadedFile.getFileName());
 			attachment.setContent(uploadedFile.getContent());
 			filesList.add(attachment);
-
 		} catch (Exception e) {
 			log.error("Exception in handleFileUpload", e);
 			GeneralUtils.showSystemErrorDialog();
@@ -167,6 +167,8 @@ public class AddDocumentBean implements Serializable {
 	}
 
 	private void setCustomProperties(Attachment attachment) {
+		selectedDocumentClass.getPropertiesList()
+				.add(new Property(CustomColumnsEnum.UUID.getValue(), UUID.randomUUID().toString()));
 		selectedDocumentClass.getPropertiesList()
 				.add(new Property(CustomColumnsEnum.CONTENT_SIZE.getValue(), attachment.getContentSize()));
 		selectedDocumentClass.getPropertiesList()
@@ -196,6 +198,7 @@ public class AddDocumentBean implements Serializable {
 					|| property.getColumnName().equalsIgnoreCase(CustomColumnsEnum.FILE_NAME.getValue())
 					|| property.getColumnName().equalsIgnoreCase(CustomColumnsEnum.FULL_PATH.getValue())
 					|| property.getColumnName().equalsIgnoreCase(CustomColumnsEnum.MIME_TYPE.getValue())
+					|| property.getColumnName().equalsIgnoreCase(CustomColumnsEnum.UUID.getValue())
 					|| property.getColumnName().equalsIgnoreCase(CustomColumnsEnum.ORIGINAL_FILE_NAME.getValue())) {
 				iterator.remove();
 			}

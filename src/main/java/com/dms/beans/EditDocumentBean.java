@@ -53,6 +53,8 @@ public class EditDocumentBean implements Serializable {
 
 	private List<String> filesList = new ArrayList<String>();
 
+	private boolean hideForm;
+
 	public String getFilesListAsJson() {
 		return new Gson().toJson(getFilesList());
 	}
@@ -70,7 +72,7 @@ public class EditDocumentBean implements Serializable {
 
 	private void loadDocument(String documentUUID) throws Exception {
 
-		log.info("####### INIT EditDocumentBean,documentId: " + documentUUID);
+		log.info("####### EditDocumentBean >>> loadDocument,documentId: " + documentUUID);
 		filesList.clear();
 		document = null;
 		if (StringUtils.isBlank(documentUUID)) {
@@ -131,13 +133,12 @@ public class EditDocumentBean implements Serializable {
 			filesList.clear();
 			GeneralUtils.addInfoMessage("تم الحفظ", null);
 			int index = currentUserBean.getResultUUIDList().indexOf(document.getUuid());
-			System.out.println("####### index: " + index + ",uuid: " + document.getUuid() + ",getResultUUIDList: "
-					+ currentUserBean.getResultUUIDList().size());
 			document = null;
 			if ((index + 1) != currentUserBean.getResultUUIDList().size()) {
 				String nextUUID = currentUserBean.getResultUUIDList().get(index + 1);
 				loadDocument(nextUUID);
 			} else {
+				hideForm = true; // we should bind this to form
 				propertiesPanelGrid.getChildren().clear();
 				GeneralUtils.showDialogError("تم تعديل جميع نتائج البحث");
 			}
@@ -194,6 +195,14 @@ public class EditDocumentBean implements Serializable {
 
 	public void setFilesList(List<String> filesList) {
 		this.filesList = filesList;
+	}
+
+	public boolean isHideForm() {
+		return hideForm;
+	}
+
+	public void setHideForm(boolean hideForm) {
+		this.hideForm = hideForm;
 	}
 
 }

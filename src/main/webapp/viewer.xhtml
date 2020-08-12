@@ -1,37 +1,61 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                template="/WEB-INF/templatePopup.xhtml">
 
-    <h:head>
-         <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/images/favicon.ico" />
-        <f:facet name="first">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-            <meta name="apple-mobile-web-app-capable" content="yes" />
-        </f:facet>
-        <title>استعراض الوثيقة</title>
-    </h:head>
+    <ui:define name="head">
+      <script src="#{request.contextPath}/resources/openseadragon/openseadragon.min.js"></script>
+    </ui:define>
+    <ui:define name="title">استعراض الوثيقة</ui:define>
 
-    <h:body>
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
     
        
-		<script src="#{request.contextPath}/resources/openseadragon/openseadragon.min.js"></script>
 		
-		<div id="loading" style="width: 500px; margin:0 auto">
-		   <p:graphicImage id="loading" name="images/preloader.gif" library="omega-layout" style="top: 150px; position: absolute; z-index: 500000;"/>
-		</div>		
-		<div id="tilesource-collection" style="width: 800px; height: 600px;"></div>
+		
+		<h:form id="form" rendered="#{viewerBean.document != null}">
+				
+			<p:hotkey bind="left" handler="PF('nextButton').jq.click(); " />
+			<p:hotkey bind="right" handler="PF('previousButton').jq.click(); " />
+			
+			<p:commandButton widgetVar="nextButton" style="position: absolute; top: 50%; left: 1%;" icon="fa fa-arrow-left" update="form" action="#{viewerBean.next}" disabled="#{!viewerBean.isNextEnabled()}" onstart="PF('statusDialog').show();" oncomplete="PF('statusDialog').hide();"/>
+			<p:commandButton widgetVar="previousButton" style="position: absolute; top: 50%; right: 1%;" icon="fa fa-arrow-right" update="form" action="#{viewerBean.previous}" disabled="#{!viewerBean.isPreviousEnabled()}" onstart="PF('statusDialog').show();" oncomplete="PF('statusDialog').hide();"/>
+			
+			
+			<h:panelGroup id="imageViewer" style="width: 600px; height: 600px;margin:0 auto" layout="block" rendered="#{viewerBean.document != null and viewerBean.document.mimeType.indexOf('image') != -1}">
+			     <h:panelGroup id="loading" layout="block" style="width: 500px; margin:0 auto">
+				   <p:graphicImage id="loadingImage" name="images/preloader.gif" library="omega-layout" style="top: 150px; position: absolute; z-index: 500000;"/>
+				 </h:panelGroup>		
+				 <h:panelGroup layout="block">
+				   <div id="tilesource-collection" style="width: 600px; height: 600px;"></div>
+				 </h:panelGroup>
+			</h:panelGroup>
+			<h:panelGroup id="pdfViewer" layout="block" style="width: 800px; height: 600px;margin:0 auto" rendered="#{viewerBean.document != null and viewerBean.document.mimeType.indexOf('pdf') != -1}">
+			   <pe:documentViewer id="documentViewer" width="800"  height="600" url="/viewer?id=#{viewerBean.document.id}" />
+		    </h:panelGroup>
+		    
+		    <h:panelGroup id="downloadDiv" layout="block" style="position: absolute; top: 50%; right: 40%;" rendered="#{viewerBean.document != null and viewerBean.document.mimeType.indexOf('pdf') == -1 and viewerBean.document.mimeType.indexOf('image') == -1}">
+			   <p:outputLabel value="الوثيقة ليست صورة أو PDF"/>
+			   <p:button style="margin-right:10px;"
+			             value="تحميل الوثيقة"
+			             onclick="PF('statusDialog').show();setTimeout(function(){ PF('statusDialog').hide(); }, 1500);"
+						 href="#{request.contextPath}/viewer?id=#{viewerBean.document.id}&amp;mode=download"
+						 icon="fa fa-download">
+				</p:button>
+		    </h:panelGroup>
+		
 		<script type="text/javascript">
 		//<![CDATA[
 		    
 		    var urls = #{viewerBean.filesListAsJson};
-		    if(urls == null || urls == ''){
-		    	return;
-		    }
+		    
+		    if(urls!= null && urls !=''){
+		    	
 		    var tileSources = urls.map(function(url) {
 		        return {
 		          url: url,
@@ -61,19 +85,23 @@
 		    	  
 		    	});
 		
+		    }
 		    function showLoading(){
 		        
 		    }
 		    
 		    function hideLoading(){
-		    	document.getElementById('loading').style.display='none';
+		    	document.getElementById('form:loading').style.display='none';
 		    }
 		
 		//]]>
 		</script>
         
         
+        </h:form>
+          </div>
+        </div>
         
-    </h:body>
+    </ui:define>
 
-</html>
+</ui:composition>

@@ -51,8 +51,9 @@
 	                     <h:panelGrid id="inputs" columns="2" binding="#{addDocumentBean.propertiesPanelGrid}"></h:panelGrid>
 	                     <p:panelGrid columns="1" style="width:70%" styleClass="ui-panelgrid-blank ui-g-5">
 	                         <p:fileUpload widgetVar="fileUpload" id="fileUpload"  uploadLabel=""  cancelLabel="" label="اختر الملفات"  
-						       onstart="PF('statusDialog').show();"
-						       oncomplete="PF('statusDialog').hide();"
+						       sequential="true"
+						       onstart="PF('statusDialog').show();"				       
+						       oncomplete="setTimeout(function(){ PF('statusDialog').hide(); }, 1000);"
 						       mode="advanced" auto="true" 
 						       multiple="true"  immediate="true" 
 	                           listener="#{addDocumentBean.handleFileUpload}"
