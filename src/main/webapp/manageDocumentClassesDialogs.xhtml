@@ -9,11 +9,17 @@
 	
 		
 		<p:dialog modal="true" dynamic="true" id="addNewClassDialog" widgetVar="addNewClassDialogWidget" 
-		closable="true" header="إنشاء تصنيف جديد" 
+		closable="true" header="#{manageDocumentClassesBean.newDocumentClass.id == null ? 'انشاء تصنيف جديد' : 'EDIT CLASS' }" 
 		resizable="false" width="600" height="250" position="center top" style="margin-top:100px;"    
 		dir="rtl" closeOnEscape="true">
 			  
+			  <f:facet name="header">
+			       <h:outputText rendered="#{empty manageDocumentClassesBean.newDocumentClass.id}" value="انشاء تصنيف جديد"/>
+			       <h:outputText rendered="#{not empty manageDocumentClassesBean.newDocumentClass.id}" value="تعديل التصنيف : #{manageDocumentClassesBean.newDocumentClass.displayNameArabic}"/>
+			  </f:facet>
+   
 			 <h:panelGrid columns="2">
+				  	
 				  				  
 				  <p:outputLabel value="الإسم العربي" styleClass="requiredLabel"/>
 				  <p:inputText value="#{manageDocumentClassesBean.newDocumentClass.displayNameArabic}" 
@@ -30,10 +36,10 @@
 			  </h:panelGrid>
 			  
 			  <p:commandButton 
-			  value="إنشاء تصنيف جديد" action="#{manageDocumentClassesBean.createNewDocumentClass}" styleClass="buttonClass" 			  
+			  value="#{empty manageDocumentClassesBean.newDocumentClass.id ? 'انشاء التصنيف':'حفظ التعديلات'}" action="#{manageDocumentClassesBean.saveDocumentClass}" styleClass="buttonClass" 			  
 			  onstart="PF('statusDialog').show();" 
-			  oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){PF('addNewClassDialogWidget').hide();}" 
-			  update=":form:tabs:documentClassesList :form:tabs:propertiesTable"> 
+			  oncomplete="PF('statusDialog').hide();if (!args.validationFailed){PF('addNewClassDialogWidget').hide();}" 
+			  update=":form:tabs:documentClassMenu :form:tabs:propertiesTable"> 
 			  </p:commandButton>
 			  					  
         </p:dialog>
@@ -77,7 +83,7 @@
 			  <p:commandButton 
 			  value="إضافة" action="#{manageDocumentClassesBean.createNewProperty}" 			  
 			  onstart="PF('statusDialog').show();" 
-			  oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){PF('addNewPropertyDialogWidget').hide();}" 
+			  oncomplete="submitCallback(xhr, status, args);if (!args.validationFailed){PF('addNewPropertyDialogWidget').hide();}" 
 			  update="addNewPropertyDialog :form:tabs:propertiesTable"> 
 			  </p:commandButton>
 			  					  

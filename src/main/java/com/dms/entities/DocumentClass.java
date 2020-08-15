@@ -25,7 +25,7 @@ import org.hibernate.annotations.GenericGenerator;
 import com.dms.enums.DocumentClassTableNameEnum;
 
 @Entity
-public class DocumentClass implements Serializable {
+public class DocumentClass extends BaseEntity implements Serializable {
 
 	private static final long serialVersionUID = -8575974502268583654L;
 	@Id

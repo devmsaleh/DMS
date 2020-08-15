@@ -11,21 +11,32 @@
         <div class="ui-g">
             <div class="ui-g-12">
                 <h:form id="form">
-                <p:growl autoUpdate="true" id="messages" showDetail="false" escape="false"/>
+                <p:growl id="messages" showDetail="false" 
+                escape="false">
+                  <p:autoUpdate />
+                </p:growl>
                 
                 
                 <p:tabView id="tabs" dynamic="true" cache="true">
                   <p:tab title="التصنيفات">
                     <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
                     
-	                    <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
+	                    <p:panelGrid columns="3" styleClass="ui-panelgrid-blank">
 		                    <p:outputLabel value="التصنيفات الحالية"/>
-		                    <p:selectOneMenu id="documentClassesList" value="#{manageDocumentClassesBean.selectedDocumentClassId}">
+		                    <p:selectOneMenu id="documentClassMenu"
+		                    converter="omnifaces.SelectItemsConverter" 
+		                    value="#{manageDocumentClassesBean.selectedDocumentClass}">
 									<f:selectItems value="#{manageDocumentClassesBean.documentClassesList}" var="documentClass"
-									itemLabel="#{documentClass.displayNameArabic}" itemValue="#{documentClass.id}" />									
-						    <p:ajax listener="#{manageDocumentClassesBean.documentClassChanged}" update="propertiesTable" onstart="PF('statusDialog').show();" 
-			                   oncomplete="submitCallback(xhr, status, args);"/>
-						    </p:selectOneMenu> 
+									itemLabel="#{documentClass.displayNameArabic}" itemValue="#{documentClass}" />									
+						    <p:ajax  update="propertiesTable" 
+						       onstart="PF('statusDialog').show();" 
+			                   oncomplete="PF('statusDialog').hide();"/>
+						    </p:selectOneMenu>
+						    <p:commandLink					   
+							   value="تعديل" update=":form:addNewClassDialog" style="margin-top:10px;"
+							   action="#{manageDocumentClassesBean.setSelectedDocumentClass()}"							    
+							   oncomplete="PF('addNewClassDialogWidget').show();" >					  						       
+						    </p:commandLink>  
 					    </p:panelGrid>
 					    
 					    
@@ -45,9 +56,12 @@
 						 
 						</p:dataTable>
 					    
-					    <p:commandButton type="button"					   
-							   value="إنشاء تصنيف جديد"  style="margin-top:10px;"							    
-							   onclick="PF('addNewClassDialogWidget').show();" >					  
+					    <p:commandButton 					   
+							   value="إنشاء تصنيف جديد"  
+							   style="margin-top:10px;"
+							   action="#{manageDocumentClassesBean.addNewDocumentClassButtonClicked}"							    
+							   update=":form:addNewClassDialog"
+							   oncomplete="PF('addNewClassDialogWidget').show();" >					  
 						</p:commandButton> 
 						
 						<p:commandButton type="button"					   

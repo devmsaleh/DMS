@@ -1,19 +1,12 @@
 package com.dms.beans;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.component.html.HtmlPanelGrid;
 
-import org.primefaces.PrimeFaces;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +62,7 @@ public class SearchDocumentBean implements Serializable {
 
 	private List<ColumnModel> columns = new ArrayList<ColumnModel>(0);
 
-	private StreamedContent selectedFile;
+	private boolean searchPerformed;
 
 	@PostConstruct
 	public void init() {
@@ -81,19 +74,21 @@ public class SearchDocumentBean implements Serializable {
 			}
 		} catch (Exception e) {
 			log.error("Exception in init AddDocumentBean", e);
+			throw new RuntimeException(e);
 		}
 	}
 
 	public void documentClassChanged() {
 		try {
 			if (selectedDocumentClassId != null) {
+				searchPerformed = false;
 				selectedDocumentClass = documentClassService
 						.findWithPropertiesAndChoiceListItems(selectedDocumentClassId);
 				UIUtils.generatePropertiesInputsForSearch(selectedDocumentClass.getPropertiesList(),
 						propertiesPanelGrid, localeBean.getLocale(), currentUserBean.getUser());
 			}
 		} catch (Exception e) {
-			PrimeFaces.current().ajax().addCallbackParam("errorDialog", true);
+			GeneralUtils.showSystemErrorDialog();
 			log.error("Exception in documentClassChanged", e);
 		}
 	}
@@ -112,6 +107,7 @@ public class SearchDocumentBean implements Serializable {
 			for (String where : propertiesWhereStatementsList) {
 				System.out.println("####### where: " + where);
 			}
+			searchPerformed = true;
 			documentsList = utilsRepository.findDocuments(selectedDocumentClass.getTableName().getValue(),
 					selectedDocumentClass.getPropertiesList(),
 					GeneralUtils.generateWhereStatementsString(propertiesWhereStatementsList),
@@ -128,19 +124,8 @@ public class SearchDocumentBean implements Serializable {
 			System.out.println("########### renderSearchTable: " + renderSearchTable);
 			System.out.println("########### columns: " + columns.size());
 		} catch (Exception e) {
-			PrimeFaces.current().ajax().addCallbackParam("errorDialog", true);
 			log.error("Exception in documentClassChanged", e);
-		}
-	}
-
-	public void loadSelectedFile(Document document) {
-		try {
-			System.out.println("########## loadSelectedFile,document: " + document.getFullPath());
-			System.out.println(document.getFullPath().replace("\\", "\\\\"));
-			InputStream is = Files.newInputStream(Paths.get(document.getFullPath().replace("\\", "\\\\")));
-			selectedFile = new DefaultStreamedContent(is, document.getMimeType(), document.getOriginalFileName());
-		} catch (IOException e) {
-			e.printStackTrace();
+			GeneralUtils.showSystemErrorDialog();
 		}
 	}
 
@@ -208,12 +193,12 @@ public class SearchDocumentBean implements Serializable {
 		this.columns = columns;
 	}
 
-	public StreamedContent getSelectedFile() {
-		return selectedFile;
+	public boolean isSearchPerformed() {
+		return searchPerformed;
 	}
 
-	public void setSelectedFile(StreamedContent selectedFile) {
-		this.selectedFile = selectedFile;
+	public void setSearchPerformed(boolean searchPerformed) {
+		this.searchPerformed = searchPerformed;
 	}
 
 }

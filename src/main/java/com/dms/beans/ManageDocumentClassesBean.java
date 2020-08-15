@@ -2,6 +2,7 @@ package com.dms.beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -109,20 +110,51 @@ public class ManageDocumentClassesBean implements Serializable {
 			}
 		} catch (Exception e) {
 			log.error("Exception in init ManageDocumentClassesBean", e);
+			throw new RuntimeException(e);
 		}
 	}
 
-	public void createNewDocumentClass() {
+	public void saveDocumentClass() {
+
+		newDocumentClass.setDisplayNameArabic(newDocumentClass.getDisplayNameArabic().trim());
+
+		if (StringUtils.isBlank(newDocumentClass.getDisplayNameEnglish())) {
+			newDocumentClass.setDisplayNameEnglish(newDocumentClass.getDisplayNameArabic());
+		}
+
+		if (newDocumentClass.getId() == null || newDocumentClass.getId() <= 0) {
+			createNewDocumentClass();
+		} else {
+			updateDocumentClass();
+		}
+	}
+
+	private void updateDocumentClass() {
+		try {
+
+			newDocumentClass.setLastModifiedBy(currentUserBean.getUser());
+			newDocumentClass.setDateLastModified(new Date());
+			documentClassRepository.save(newDocumentClass);
+
+			selectedDocumentClassId = newDocumentClass.getId();
+			documentClassChanged();
+			newDocumentClass = new DocumentClass();
+			PrimeFaces.current().executeScript("PF('successDialogWidget').show()");
+		} catch (Exception e) {
+			GeneralUtils.showSystemErrorDialog();
+			log.error("Exception in createNewDocumentClass", e);
+		}
+	}
+
+	private void createNewDocumentClass() {
 		try {
 
 			if (documentClassRepository
-					.countByDisplayNameArabicIgnoreCase(newDocumentClass.getDisplayNameArabic()) > 0) {
+					.countByDisplayNameArabicIgnoreCase(newDocumentClass.getDisplayNameArabic().trim()) > 0) {
 				GeneralUtils.addErrorMessage("يوجد تصنيف بنفس الإسم العربى مدخل مسبقا", null);
 				return;
 			}
-			if (StringUtils.isBlank(newDocumentClass.getDisplayNameEnglish())) {
-				newDocumentClass.setDisplayNameEnglish(newDocumentClass.getDisplayNameArabic());
-			}
+
 			newDocumentClass.setCreatedBy(currentUserBean.getUser());
 			newDocumentClass.setLastModifiedBy(currentUserBean.getUser());
 			newDocumentClass.setSymbolicName(generateDocumentClassSymbolicName());
@@ -132,9 +164,9 @@ public class ManageDocumentClassesBean implements Serializable {
 			newDocumentClass = new DocumentClass();
 			selectedDocumentClassId = newDocumentClassCopy.getId();
 			documentClassChanged();
-			PrimeFaces.current().ajax().addCallbackParam("successDialog", true);
+			PrimeFaces.current().executeScript("PF('successDialogWidget').show()");
 		} catch (Exception e) {
-			PrimeFaces.current().ajax().addCallbackParam("errorDialog", true);
+			GeneralUtils.showSystemErrorDialog();
 			log.error("Exception in createNewDocumentClass", e);
 		}
 	}
@@ -142,19 +174,25 @@ public class ManageDocumentClassesBean implements Serializable {
 	public void documentClassChanged() {
 		try {
 			selectedDocumentClass = documentClassService.findWithProperties(selectedDocumentClassId);
-			PrimeFaces.current().ajax().addCallbackParam("successDialog", true);
 		} catch (Exception e) {
-			PrimeFaces.current().ajax().addCallbackParam("errorDialog", true);
+			GeneralUtils.showSystemErrorDialog();
 			log.error("Exception in documentClassChanged", e);
 		}
+	}
+
+	public void addNewDocumentClassButtonClicked() {
+		newDocumentClass = new DocumentClass();
+	}
+
+	public void setSelectedDocumentClass() {
+		newDocumentClass = selectedDocumentClass;
 	}
 
 	public void choiceListChanged() {
 		try {
 			selectedChoiceList = documentClassService.findChoiceListWithItems(selectedChoiceListId);
-			PrimeFaces.current().ajax().addCallbackParam("successDialog", true);
 		} catch (Exception e) {
-			PrimeFaces.current().ajax().addCallbackParam("errorDialog", true);
+			GeneralUtils.showSystemErrorDialog();
 			log.error("Exception in documentClassChanged", e);
 		}
 	}
@@ -184,9 +222,9 @@ public class ManageDocumentClassesBean implements Serializable {
 			newChoiceList = new ChoiceList();
 			selectedChoiceListId = newChoiceListCopy.getId();
 			choiceListChanged();
-			PrimeFaces.current().ajax().addCallbackParam("successDialog", true);
+			PrimeFaces.current().executeScript("PF('successDialogWidget').show()");
 		} catch (Exception e) {
-			PrimeFaces.current().ajax().addCallbackParam("errorDialog", true);
+			GeneralUtils.showSystemErrorDialog();
 			log.error("Exception in createNewChoiceList", e);
 		}
 	}
@@ -213,7 +251,7 @@ public class ManageDocumentClassesBean implements Serializable {
 			}
 			// PrimeFaces.current().ajax().addCallbackParam("successDialog", true);
 		} catch (Exception e) {
-			PrimeFaces.current().ajax().addCallbackParam("errorDialog", true);
+			GeneralUtils.showSystemErrorDialog();
 			log.error("Exception in createNewProperty", e);
 		}
 	}
@@ -230,9 +268,9 @@ public class ManageDocumentClassesBean implements Serializable {
 		try {
 
 			doCreateNewProperty();
-			PrimeFaces.current().ajax().addCallbackParam("successDialog", true);
+			PrimeFaces.current().executeScript("PF('successDialogWidget').show()");
 		} catch (Exception e) {
-			PrimeFaces.current().ajax().addCallbackParam("errorDialog", true);
+			GeneralUtils.showSystemErrorDialog();
 			log.error("Exception in createNewProperty", e);
 		}
 	}
