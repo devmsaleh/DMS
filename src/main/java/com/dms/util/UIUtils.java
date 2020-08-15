@@ -138,13 +138,30 @@ public class UIUtils {
 			if (property.getType().equals(PropertyTypeEnum.MULTI_TEXT.getValue())) {
 				Chips input = new Chips();
 				input.setId(property.getSymbolicName());
+				input.setStyle(InputsStyles.MULTI_TEXT_STYLE);
 				input.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.MULTI_TEXT);
 				uiInput = input;
 			}
 
+			if (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())
+					|| property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
+				InputText inputText = new InputText();
+				inputText.setPlaceholder("اليوم/الشهر/السنة");
+				inputText.setId(property.getSymbolicName());
+				inputText.setStyle(InputsStyles.INPUT_TEXT_STYLE);
+				inputText.setMaxlength(10);
+				if (property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
+					inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.HIJRI_DATE);
+					inputText.setStyleClass(InputsStyles.HIJRI_DATE_STYLE_CLASS);
+				} else if (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())) {
+					inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.GREG_DATE);
+					inputText.setStyleClass(InputsStyles.GREG_DATE_STYLE_CLASS);
+				}
+
+				uiInput = inputText;
+			}
+
 			if (property.getType().equals(PropertyTypeEnum.SMALL_TEXT.getValue())
-					|| property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())
-					|| property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())
 					|| property.getType().equals(PropertyTypeEnum.SMALL_NUMBER.getValue())
 					|| property.getType().equals(PropertyTypeEnum.LONG_NUMBER.getValue())) {
 				InputText inputText = new InputText();
@@ -154,33 +171,12 @@ public class UIUtils {
 					inputText.setMaxlength(property.getMaxLength());
 				}
 
-				if (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())
-						|| property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
-
-					if (property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
-
-						inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME,
-								InputsDataTypes.HIJRI_DATE);
-						inputText.setStyleClass(InputsStyles.HIJRI_DATE_STYLE_CLASS);
-
-					}
-
-					if (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())) {
-
-						inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME,
-								InputsDataTypes.GREG_DATE);
-						inputText.setStyleClass(InputsStyles.GREG_DATE_STYLE_CLASS);
-					}
-
-				} else {
-					if (property.getType().equals(PropertyTypeEnum.SMALL_NUMBER.getValue()))
-						inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME,
-								InputsDataTypes.INTEGER);
-					else if (property.getType().equals(PropertyTypeEnum.LONG_NUMBER.getValue()))
-						inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.LONG);
-					else
-						inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.STRING);
-				}
+				if (property.getType().equals(PropertyTypeEnum.SMALL_NUMBER.getValue()))
+					inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.INTEGER);
+				else if (property.getType().equals(PropertyTypeEnum.LONG_NUMBER.getValue()))
+					inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.LONG);
+				else
+					inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.STRING);
 
 				uiInput = inputText;
 
@@ -272,8 +268,6 @@ public class UIUtils {
 			propertiesPanelGrid.getChildren().add(label);
 
 			if (property.getType().equals(PropertyTypeEnum.SMALL_TEXT.getValue())
-					|| property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())
-					|| property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())
 					|| property.getType().equals(PropertyTypeEnum.SMALL_NUMBER.getValue())
 					|| property.getType().equals(PropertyTypeEnum.LONG_NUMBER.getValue())
 					|| property.getType().equals(PropertyTypeEnum.MULTI_TEXT.getValue())) {
@@ -284,32 +278,30 @@ public class UIUtils {
 					inputText.setMaxlength(property.getMaxLength());
 				}
 
-				if (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())
-						|| property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
-
-					if (property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
-						propertiesPanelGrid.getChildren().add(createHijriDateSearchInputs(property));
-					}
-
-					if (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())) {
-						propertiesPanelGrid.getChildren().add(createGregDateSearchInputs(property));
-					}
-
-				} else {
-					if (property.getType().equals(PropertyTypeEnum.SMALL_NUMBER.getValue()))
-						inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME,
-								InputsDataTypes.INTEGER);
-					else if (property.getType().equals(PropertyTypeEnum.LONG_NUMBER.getValue()))
-						inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.LONG);
-					else
-						inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.STRING);
-				}
+				if (property.getType().equals(PropertyTypeEnum.SMALL_NUMBER.getValue()))
+					inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.INTEGER);
+				else if (property.getType().equals(PropertyTypeEnum.LONG_NUMBER.getValue()))
+					inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.LONG);
+				else
+					inputText.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.STRING);
 
 				uiInput = inputText;
-				if (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())
-						|| property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
-					uiInput = null;
+
+			}
+
+			if (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())
+					|| property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
+
+				if (property.getType().equals(PropertyTypeEnum.HIJRI_DATE.getValue())) {
+					propertiesPanelGrid.getChildren().add(createHijriDateSearchInputs(property));
 				}
+
+				if (property.getType().equals(PropertyTypeEnum.GREG_DATE.getValue())) {
+					propertiesPanelGrid.getChildren().add(createGregDateSearchInputs(property));
+				}
+
+				uiInput = null;
+
 			}
 
 			if (property.getType().equals(PropertyTypeEnum.LONG_TEXT.getValue())) {
@@ -511,7 +503,8 @@ public class UIUtils {
 		inputTextFrom.setStyleClass(InputsStyles.HIJRI_DATE_STYLE_CLASS);
 		inputTextFrom.setStyle(InputsStyles.HIJRI_DATE_INPUT_TEXT_STYLE_FROM);
 		inputTextFrom.setId(property.getSymbolicName() + Constants.HIJRI_DATE_SEARCH_INPUT_FROM_CONTAINS);
-
+		inputTextFrom.setPlaceholder("اليوم/الشهر/السنة");
+		inputTextFrom.setMaxlength(10);
 		HtmlOutputLabel labelTo = new HtmlOutputLabel();
 		labelTo.setStyle("margin-left:5px;margin-right:5px;");
 		labelTo.setValue("إلى");
@@ -521,6 +514,8 @@ public class UIUtils {
 		inputTextTo.setStyleClass(InputsStyles.HIJRI_DATE_STYLE_CLASS);
 		inputTextTo.setStyle(InputsStyles.HIJRI_DATE_INPUT_TEXT_STYLE_TO);
 		inputTextTo.setId(property.getSymbolicName() + Constants.HIJRI_DATE_SEARCH_INPUT_TO_CONTAINS);
+		inputTextTo.setPlaceholder("اليوم/الشهر/السنة");
+		inputTextTo.setMaxlength(10);
 
 		htmlPanelGroup.getChildren().add(labelFrom);
 		htmlPanelGroup.getChildren().add(inputTextFrom);

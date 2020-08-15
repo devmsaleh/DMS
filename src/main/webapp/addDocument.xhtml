@@ -6,6 +6,9 @@
                 template="/WEB-INF/template.xhtml">
 
     <ui:define name="head">
+        <script>
+        
+        </script>
         <style>
           .ui-fileupload-content{
              display:none !important;
@@ -15,6 +18,8 @@
              background: transparent !important; 
              border: none !important;
           }
+          
+          
         </style>
         <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
 		<h:outputScript target="head">
@@ -26,6 +31,7 @@
         <script src="#{request.contextPath}/resources/js/calendar/jquery.calendars.picker.js"></script>
 		<script src="#{request.contextPath}/resources/js/calendar/jquery.calendars.ummalqura.js"></script>
 		<script src="#{request.contextPath}/resources/js/calendar/jquery.calendars.ummalqura-ar.js"></script>
+        <script src="#{request.contextPath}/resources/js/inputMask/jquery.inputmask.js"></script>
     </ui:define>
     <ui:define name="title">إدخال الملفات</ui:define>
     <ui:define name="content">
@@ -49,6 +55,7 @@
 						    
 	                  <p:panelGrid id="propertiesTable" columns="2" columnClasses="inputsColumnAdd,uploadFileColumn" styleClass="ui-panelgrid-blank">
 	                     <h:panelGrid id="inputs" columns="2" binding="#{addDocumentBean.propertiesPanelGrid}"></h:panelGrid>
+	                     
 	                     <p:panelGrid columns="1" style="width:70%" styleClass="ui-panelgrid-blank ui-g-5">
 	                         <p:fileUpload widgetVar="fileUpload" id="fileUpload"  uploadLabel=""  cancelLabel="" label="اختر الملفات"  
 						       sequential="true"
@@ -104,24 +111,7 @@
 			      </p:confirmDialog>
 			        
                 </h:form>
-                <p:outputPanel>
-                    <p:autoUpdate />
-					<h:outputScript id="applyChangeHandler">
-						$(function() {						                
-			              $('.hijriDate').calendarsPicker({calendar: $.calendars.instance('ummalqura','ar'),maxDate: 0,dateFormat:'yyyy/mm/dd'});
-						  $('.gregDate').calendarsPicker({calendar2: $.calendars.instance(),maxDate: 0,dateFormat:'yyyy/mm/dd'});
-		                });
-						$('.hijriDate').keydown(function(e) {
-		                   e.preventDefault();
-		                   return false;
-		                });
-						
-						$('.gregDate').keydown(function(e) {
-		                   e.preventDefault();
-		                   return false;
-		                });
-					</h:outputScript>
-		        </p:outputPanel>
+               
             </div>
         </div>
         

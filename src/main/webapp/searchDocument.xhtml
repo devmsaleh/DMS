@@ -139,23 +139,7 @@
 			    </p:commandButton>
                 
                 </h:form>
-                <p:outputPanel autoUpdate="true">
-					<h:outputScript id="applyChangeHandler">
-						$(function() {						                
-			              $('.hijriDate').calendarsPicker({calendar: $.calendars.instance('ummalqura','ar'),maxDate: 0,dateFormat:'yyyy/mm/dd'});
-						  $('.gregDate').calendarsPicker({calendar2: $.calendars.instance(),maxDate: 0,dateFormat:'yyyy/mm/dd'});
-		                });
-						$('.hijriDate').keydown(function(e) {
-		                   e.preventDefault();
-		                   return false;
-		                });
-						
-						$('.gregDate').keydown(function(e) {
-		                   e.preventDefault();
-		                   return false;
-		                });
-					</h:outputScript>
-		        </p:outputPanel>
+                
 		        
 		        <script type="text/javascript">
 				function start() {

@@ -424,3 +424,7 @@ a span.app-title {
     background: transparent !important; 
     border: none !important;
  }
+ 
+ .ui-chips .ui-chips-container{
+    width:100% !important;
+ }

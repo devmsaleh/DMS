@@ -25,6 +25,38 @@
            } 
         </style>
         <script>
+        
+        $('.hijriDate,.gregDate').on('keydown', function(event){
+	        var key = event.keyCode || event.charCode;
+	        var isNumber = /^[0-9]$/i.test(event.key);
+	        if(key == 8 || key == 46 || key == 191){
+	           isNumber = true;
+	        }
+	        <!-- 191 is forward slash -->
+	        <!-- 8,46 is backspace -->						
+		    if(!isNumber) 
+		        return false;
+	             						           
+		});
+		
+		$('.hijriDate,.gregDate').on('keyup', function(event){
+	        
+	         var value = $(this).val();
+	         var length = value.length;
+	         if(length == 2 || length == 5){
+	           var newValue =value+'/';
+	           $(this).val(newValue); 
+	         }else if(length == 10){
+	           var arr = value.split('/');
+	           var day = arr[0];
+	           var month = arr[1];
+	           var year = arr[2];
+	           var newValue =year+'/'+month+'/'+day;
+	           $(this).val(newValue); 					          					           
+	         }     
+		           
+		});
+		
         function submitCallback(xhr, status, args) {
            PF('statusDialog').hide();
            if(args.validationFailed){
