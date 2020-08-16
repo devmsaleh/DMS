@@ -11,19 +11,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class DailyJob {
 
-    private static final Logger logger = LoggerFactory.getLogger(DailyJob.class);
+	private static final Logger logger = LoggerFactory.getLogger(DailyJob.class);
 
-    @Autowired
-    private CacheService cacheService;
+	@Autowired
+	private CacheService cacheService;
 
-    @Scheduled(fixedRate = 3600000 * 1, initialDelay = 0)
-    public void refreshCache() {
-        try {
-            logger.info("######## SHIPPING Job at: " + new Date());
-            cacheService.refreshAllCaches();
-        } catch (Exception e) {
-            logger.error("Exception in DailyJob", e);
-        }
-    }
+	@Scheduled(fixedRate = 3600000 * 1, initialDelay = 0)
+	public void refreshCache() {
+		try {
+			logger.info("######## DMS Job at: " + new Date());
+			cacheService.refreshAllCaches();
+		} catch (Exception e) {
+			logger.error("Exception in DailyJob", e);
+		}
+	}
 
 }
