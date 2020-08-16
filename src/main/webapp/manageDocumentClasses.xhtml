@@ -40,7 +40,9 @@
 					    </p:panelGrid>
 					    
 					    
-					    <p:dataTable id="propertiesTable" var="property" value="#{manageDocumentClassesBean.selectedDocumentClass.propertiesList}">
+					    <p:dataTable id="propertiesTable" var="property"
+					    emptyMessage="لا يوجد خصائص مضافة لهذا التصنيف" 
+					    value="#{manageDocumentClassesBean.selectedDocumentClass.propertiesList}">
 						    
 						    <p:column headerText="اسم الخاصية">
 						        <p:outputLabel value="#{property.displayNameArabic}" styleClass="#{property.required ? 'requiredLabel' : 'notRequiredLabel'}"/>
