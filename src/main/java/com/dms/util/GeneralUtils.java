@@ -41,11 +41,17 @@ import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 import com.itextpdf.text.pdf.codec.TiffImage;
 
+import gov.nist.isg.archiver.DirectoryArchiver;
+import gov.nist.isg.archiver.FilesArchiver;
+import gov.nist.isg.pyramidio.BufferedImageReader;
+import gov.nist.isg.pyramidio.PartialImageReader;
+import gov.nist.isg.pyramidio.ScalablePyramidBuilder;
+
 public class GeneralUtils {
 
 	public static void main(String[] args) throws Exception {
-		String filePath = "C:\\Users\\mahsaleh\\Desktop\\multi.tif";
-		convertTiffToPNG(filePath);
+		String filePath = "C:\\Users\\Dell\\Desktop\\header2.jpg";
+		createDeepZoomImage(filePath);
 	}
 
 	public static List<String> convertTiffToPNG(String filePath) {
@@ -287,6 +293,14 @@ public class GeneralUtils {
 	public static void showDialogInfo(String message) {
 		PrimeFaces.current().dialog()
 				.showMessageDynamic(new FacesMessage(FacesMessage.SEVERITY_INFO, "تنبيه", message));
+	}
+
+	public static void createDeepZoomImage(String imagePath) throws IOException {
+		ScalablePyramidBuilder spb = new ScalablePyramidBuilder(254, 1, "png", "dzi");
+		String outputFolder = "C:\\Users\\Dell\\Desktop\\zoom";
+		FilesArchiver archiver = new DirectoryArchiver(new File(outputFolder));
+		PartialImageReader pir = new BufferedImageReader(new File(imagePath));
+		spb.buildPyramid(pir, "pyramidName", archiver, 1);
 	}
 
 }
