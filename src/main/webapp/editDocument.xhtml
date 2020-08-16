@@ -46,8 +46,16 @@
   
 	                  <p:panelGrid id="propertiesTable" columns="2" columnClasses="inputsColumnAdd,uploadFileColumn" styleClass="ui-panelgrid-blank">
 	                     <h:panelGrid columns="1">
-	                        <h:panelGrid id="inputs" columns="2" binding="#{editDocumentBean.propertiesPanelGrid}"></h:panelGrid>	                     
-					        <p:commandButton					   
+	                        
+	                        <h:panelGrid columns="2" rendered="#{!editDocumentBean.hideForm}">
+	                           <h:outputLabel value="اسم الملف" style="display:block;width:110px;" styleClass="notRequiredLabel"/>
+	                           <h:outputLabel value="#{editDocumentBean.document.originalFileName}"/>
+	                        </h:panelGrid>
+	                        <h:panelGrid id="inputs" columns="2" binding="#{editDocumentBean.propertiesPanelGrid}">
+	                           
+	                        </h:panelGrid>	                     
+					        <p:commandButton
+					                   rendered="#{!editDocumentBean.hideForm}"					   
 									   value="حفظ الوثيقة"  style="margin-top:10px;"
 									   action="#{editDocumentBean.updateDocument}"
 									   update="form" 
@@ -64,6 +72,17 @@
 							 </h:panelGroup>
 						 </h:panelGroup>
 						 <pe:documentViewer id="documentViewer" width="800"  height="600" url="/viewer?id=#{editDocumentBean.document.id}" rendered="#{editDocumentBean.document != null and editDocumentBean.document.mimeType.indexOf('pdf') != -1}"/> 
+	                     
+	                     <h:panelGroup id="downloadDiv" layout="block" style="position: absolute; top: 50%; right: 40%;" rendered="#{editDocumentBean.document != null and editDocumentBean.document.mimeType.indexOf('pdf') == -1 and editDocumentBean.document.mimeType.indexOf('image') == -1}">
+							   <p:outputLabel value="الوثيقة ليست صورة أو PDF"/>
+							   <p:button style="margin-right:10px;"
+							             value="تحميل الوثيقة"
+							             onclick="PF('statusDialog').show();setTimeout(function(){ PF('statusDialog').hide(); }, 1500);"
+										 href="#{request.contextPath}/viewer?id=#{editDocumentBean.document.id}&amp;mode=download"
+										 icon="fa fa-download">
+								</p:button>
+						 </h:panelGroup>
+	                     
 	                     <script type="text/javascript">
 						 //<![CDATA[
 						    

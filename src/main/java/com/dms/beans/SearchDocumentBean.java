@@ -108,10 +108,14 @@ public class SearchDocumentBean implements Serializable {
 				System.out.println("####### where: " + where);
 			}
 			searchPerformed = true;
+
+			int maxResult = 500;
+			int pageSize = 10;
 			documentsList = utilsRepository.findDocuments(selectedDocumentClass.getTableName().getValue(),
 					selectedDocumentClass.getPropertiesList(),
 					GeneralUtils.generateWhereStatementsString(propertiesWhereStatementsList),
-					GeneralUtils.generateColumnsStringForSearch(selectedDocumentClass.getPropertiesList()), 1);
+					GeneralUtils.generateColumnsStringForSearch(selectedDocumentClass.getPropertiesList()), 1,
+					maxResult, pageSize);
 			System.out.println("########### documentsList: " + documentsList.size());
 			renderSearchTable = documentsList.size() > 0;
 			if (documentsList.size() > 0)
@@ -124,7 +128,8 @@ public class SearchDocumentBean implements Serializable {
 			System.out.println("########### renderSearchTable: " + renderSearchTable);
 			System.out.println("########### columns: " + columns.size());
 		} catch (Exception e) {
-			log.error("Exception in documentClassChanged", e);
+			log.error("Exception in search,documentClass: " + selectedDocumentClass.getId() + ",tableName: "
+					+ selectedDocumentClass.getTableName(), e);
 			GeneralUtils.showSystemErrorDialog();
 		}
 	}

@@ -100,8 +100,17 @@
 					  
 					  <h:panelGroup layout="block" id="documentsDiv">
 						  <p:outputLabel style="color:red;font-weight: bold;" value="لا يوجد نتائج" rendered="#{searchDocumentBean.searchPerformed and searchDocumentBean.documentsList.size() == 0}"/>
-						  <p:dataTable emptyMessage=""   id="documentsTable" var="document" rendered="#{searchDocumentBean.renderSearchTable}" 
-						  value="#{searchDocumentBean.documentsList}"  widgetVar="documentsTableWidget" rowIndexVar="index" rowKey="#{document.id}">
+						  <p:dataTable emptyMessage=""   
+						  id="documentsTable" var="document" rendered="#{searchDocumentBean.renderSearchTable}" 
+						  value="#{searchDocumentBean.documentsList}"  widgetVar="documentsTableWidget" rowIndexVar="index" rowKey="#{document.id}"
+						  rows="10" 
+                          paginatorPosition="top"
+                          paginator="#{searchDocumentBean.documentsList.size() > 10}"
+                          paginatorTemplate="{CurrentPageReport} {PageLinks}"
+                             currentPageReportTemplate="{currentPage} من {totalPages}">
+							  <f:facet name="header">
+						        عدد النتائج : #{searchDocumentBean.documentsList.size()}
+						      </f:facet>
 							  <p:columns value="#{searchDocumentBean.columns}"  var="column" id="column#{colIndex+1}" columnIndexVar="colIndex" 
 				              sortBy="#{document.customPropValues[column.property]}" style="#{column.style}" styleClass="#{column.styleClass}">
 								<f:facet name="header">

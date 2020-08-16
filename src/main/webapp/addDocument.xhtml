@@ -3,7 +3,9 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
-                template="/WEB-INF/template.xhtml">
+                template="/WEB-INF/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
 
     <ui:define name="head">
         <script>
@@ -60,7 +62,7 @@
 	                         <p:fileUpload widgetVar="fileUpload" id="fileUpload"  uploadLabel=""  cancelLabel="" label="اختر الملفات"  
 						       sequential="true"
 						       onstart="PF('statusDialog').show();"				       
-						       oncomplete="setTimeout(function(){ PF('statusDialog').hide(); }, 1000);"
+						       
 						       mode="advanced" auto="true" 
 						       multiple="true"  immediate="true" 
 	                           listener="#{addDocumentBean.handleFileUpload}"
@@ -90,7 +92,7 @@
 									          <p:confirm header="تأكيد" message="هل تريد حذف الملف #{file.originalFileName} ؟" icon="pi pi-exclamation-triangle" />
 									        </p:commandButton>
 									    </p:column>
-							    									 
+								   <o:onloadScript>PF('statusDialog').hide();</o:onloadScript>	    									 
 								  </p:dataTable>
 	                          </h:panelGroup>   
 	                     </p:panelGrid>

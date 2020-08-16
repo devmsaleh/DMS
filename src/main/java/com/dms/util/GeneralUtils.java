@@ -241,7 +241,8 @@ public class GeneralUtils {
 		columns.append(",").append(CustomColumnsEnum.ID.getValue());
 		columns.append(",").append(CustomColumnsEnum.DATE_CREATED.getValue());
 		columns.append(",").append(CustomColumnsEnum.UUID.getValue());
-		columns.append(",");
+		if (properties.size() > 0)
+			columns.append(",");
 
 		for (int i = 0; i < properties.size(); i++) {
 			columns.append(properties.get(i).getColumnName());

@@ -74,8 +74,10 @@ public class UtilsRepository {
 			DocumentClass documentClass = documentOriginal.getDocumentClass();
 			String whereCondition = " AND uuid='" + documentId + "'";
 			String columnNames = GeneralUtils.generateColumnsStringForSearch(documentClass.getPropertiesList());
+			int maxResult = 1;
+			int pageSize = 10;
 			List<Document> documentsList = findDocuments(documentClass.getTableName().getValue(),
-					documentClass.getPropertiesList(), whereCondition, columnNames, 1);
+					documentClass.getPropertiesList(), whereCondition, columnNames, 1, maxResult, pageSize);
 			log.info("######## documentsList: " + documentsList.size());
 			if (documentsList.size() > 0) {
 				Document documentFinal = documentsList.get(0);
@@ -90,19 +92,19 @@ public class UtilsRepository {
 
 	@SuppressWarnings("unchecked")
 	public List<Document> findDocuments(String documentTableName, List<Property> propertiesList, String whereCondition,
-			String columnNames, int pageNumber) {
+			String columnNames, int pageNumber, int maxResult, int pageSize) {
 
 		int numberOfSystemProperties = 8;
 		if (pageNumber > 0) {
 			pageNumber = pageNumber - 1;
 		}
-		int firstResult = pageNumber * 10;
+		int firstResult = pageNumber * pageSize;
 		String orderBy = " order by id desc ";
 		String queryStr = "select " + columnNames + " from " + documentTableName + " where 1=1 " + whereCondition
 				+ orderBy;
 		System.out.println("########## queryStr: " + queryStr);
 		Query query = entityManager.createNativeQuery(queryStr);
-		List<Object[]> resultArray = query.setMaxResults(10).setFirstResult(firstResult).getResultList();
+		List<Object[]> resultArray = query.setMaxResults(maxResult).setFirstResult(firstResult).getResultList();
 		System.out.println("########## resultArray: " + resultArray.size());
 		List<Document> resultList = new ArrayList<Document>(resultArray.size());
 		Document document = null;
