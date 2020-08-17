@@ -72,8 +72,6 @@ public class ManageDocumentClassesBean implements Serializable {
 
 	private List<ChoiceList> choiceLists = new ArrayList<ChoiceList>();
 
-	private Long selectedDocumentClassId;
-
 	private DocumentClass selectedDocumentClass;
 
 	private Long selectedChoiceListId;
@@ -99,8 +97,7 @@ public class ManageDocumentClassesBean implements Serializable {
 		try {
 			documentClassesList = documentClassRepository.findAll();
 			if (documentClassesList.size() > 0) {
-				selectedDocumentClassId = documentClassesList.get(0).getId();
-				documentClassChanged();
+				selectedDocumentClass = documentClassesList.get(0);
 			}
 			choiceLists = choiceListRepository.findAll();
 			if (choiceLists.size() > 0) {
@@ -135,9 +132,6 @@ public class ManageDocumentClassesBean implements Serializable {
 			newDocumentClass.setLastModifiedBy(currentUserBean.getUser());
 			newDocumentClass.setDateLastModified(new Date());
 			documentClassRepository.save(newDocumentClass);
-
-			selectedDocumentClassId = newDocumentClass.getId();
-			documentClassChanged();
 			newDocumentClass = new DocumentClass();
 			PrimeFaces.current().executeScript("PF('successDialogWidget').show()");
 		} catch (Exception e) {
@@ -162,21 +156,10 @@ public class ManageDocumentClassesBean implements Serializable {
 			DocumentClass newDocumentClassCopy = SerializationUtils.clone(newDocumentClass);
 			documentClassesList.add(newDocumentClassCopy);
 			newDocumentClass = new DocumentClass();
-			selectedDocumentClassId = newDocumentClassCopy.getId();
-			documentClassChanged();
 			PrimeFaces.current().executeScript("PF('successDialogWidget').show()");
 		} catch (Exception e) {
 			GeneralUtils.showSystemErrorDialog();
 			log.error("Exception in createNewDocumentClass", e);
-		}
-	}
-
-	public void documentClassChanged() {
-		try {
-			selectedDocumentClass = documentClassService.findWithProperties(selectedDocumentClassId);
-		} catch (Exception e) {
-			GeneralUtils.showSystemErrorDialog();
-			log.error("Exception in documentClassChanged", e);
 		}
 	}
 
@@ -300,11 +283,9 @@ public class ManageDocumentClassesBean implements Serializable {
 		utilsRepository.createNewDocumentColumn(DocumentClassTableNameEnum.DEFAULT_TABLE.getValue(),
 				newProperty.getColumnName(), newProperty.getColumnDatabaseType());
 
-		if (selectedDocumentClassId != null) {
-			selectedDocumentClass = documentClassService.findWithProperties(selectedDocumentClassId);
-			selectedDocumentClass.getPropertiesList().add(newProperty);
-			documentClassRepository.save(selectedDocumentClass);
-		}
+		selectedDocumentClass.getPropertiesList().add(newProperty);
+		documentClassRepository.save(selectedDocumentClass);
+
 		propertyChoiceListId = null;
 		newProperty = new Property();
 	}
@@ -415,14 +396,6 @@ public class ManageDocumentClassesBean implements Serializable {
 
 	public void setDocumentClassesList(List<DocumentClass> documentClassesList) {
 		this.documentClassesList = documentClassesList;
-	}
-
-	public Long getSelectedDocumentClassId() {
-		return selectedDocumentClassId;
-	}
-
-	public void setSelectedDocumentClassId(Long selectedDocumentClassId) {
-		this.selectedDocumentClassId = selectedDocumentClassId;
 	}
 
 	public Property getNewProperty() {

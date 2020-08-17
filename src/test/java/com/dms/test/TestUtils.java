@@ -3,6 +3,8 @@ package com.dms.test;
 import java.time.LocalTime;
 import java.util.Random;
 
+import com.dms.entities.DocumentClass;
+
 public class TestUtils {
 
 	public static int generateRandom24Hour() {
@@ -50,10 +52,12 @@ public class TestUtils {
 	}
 
 	public static void main(String[] args) {
-		int startHour = 1600;
-		int endHour = TestUtils.addHoursToTime(startHour, TestUtils.generateRandomNumber(1, 4));
-		System.out.println(endHour);
-
+		DocumentClass newClass = new DocumentClass();
+		newClass.setDisplayNameArabic("Test");
+		DocumentClass selected = newClass;
+		System.out.println("#### name1: " + selected.getDisplayNameArabic());
+		newClass = new DocumentClass();
+		System.out.println("#### name2: " + selected.getDisplayNameArabic());
 	}
 
 }
