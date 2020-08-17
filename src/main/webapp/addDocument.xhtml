@@ -21,8 +21,38 @@
              border: none !important;
           }
           
+          .ui-progressbar-label{
+             margin: -3px;        
+          }
+          
           
         </style>
+        <script>
+        function handleMultiFileUploadRequest(fileUploadWidget) {
+            var selectedFilesElement = document.getElementById('form:selectedFiles');
+        	if(selectedFilesElement.value == ''){
+        		selectedFilesElement.value = fileUploadWidget.files.length + 1;
+        	}
+        	
+        	var currentFileNumber = (selectedFilesElement.value - fileUploadWidget.files.length);
+        	if(currentFileNumber == 0)
+        		currentFileNumber = 1;
+        	var percent = (currentFileNumber / selectedFilesElement.value) * 100;
+        	percent = Math.ceil(percent);
+        	PF('progressBarWidget').setValue(percent);
+        	
+        	var span = document.getElementById("remaningFilesLabel");
+        	span.textContent = currentFileNumber+" من إجمالى : "+selectedFilesElement.value;
+        	
+        	
+        	if (fileUploadWidget.files.length === 0) {
+        		span.textContent = '';
+        		selectedFilesElement.value = '';
+        		PF('progressBarWidget').setValue(0);
+        		PF('progressBarDialogWidget').hide();
+            }
+        }
+        </script>
         <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
 		<h:outputScript target="head">
 			$ = jQuery;
@@ -40,6 +70,7 @@
         <div class="ui-g">
             <div class="ui-g-12">
                 <h:form id="form" enctype="multipart/form-data">
+                <h:inputHidden id="selectedFiles"/>
                 <p:growl id="messages" showDetail="false" escape="false">
                    <p:autoUpdate />
                 </p:growl>
@@ -61,9 +92,10 @@
 	                     <p:panelGrid columns="1" style="width:70%" styleClass="ui-panelgrid-blank ui-g-5">
 	                         <p:fileUpload widgetVar="fileUpload" id="fileUpload"  uploadLabel=""  cancelLabel="" label="اختر الملفات"  
 						       sequential="true"
-						       onstart="PF('statusDialog').show();"				       		       
+						       onstart="PF('progressBarDialogWidget').show();"				       		       
 						       mode="advanced" auto="true" 
-						       multiple="true"  immediate="true" 
+						       multiple="true"  immediate="true"
+						       oncomplete="handleMultiFileUploadRequest(PF('fileUpload'));" 
 	                           listener="#{addDocumentBean.handleFileUpload}"
 	                           update="filesTable" />
 	                          <h:panelGroup layout="block" id="filesTable">
@@ -91,7 +123,7 @@
 									          <p:confirm header="تأكيد" message="هل تريد حذف الملف #{file.originalFileName} ؟" icon="pi pi-exclamation-triangle" />
 									        </p:commandButton>
 									    </p:column>
-								   <o:onloadScript>PF('statusDialog').hide();</o:onloadScript>	    									 
+								       									 
 								  </p:dataTable>
 	                          </h:panelGroup>   
 	                     </p:panelGrid>
@@ -110,7 +142,13 @@
 			           <p:commandButton value="نعم" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
 			           <p:commandButton value="لا" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
 			      </p:confirmDialog>
-			        
+			     
+			     
+				    <p:dialog id="progressBarDialog" style="text-align:center" widgetVar="progressBarDialogWidget" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+					    <span id="remaningFilesLabel"></span>
+					    <p:progressBar animationDuration="100" id="progressBar"  labelTemplate="{value}%"  widgetVar="progressBarWidget" style="width:300px;margin:15px;"/>
+					</p:dialog>
+		    
                 </h:form>
                
             </div>

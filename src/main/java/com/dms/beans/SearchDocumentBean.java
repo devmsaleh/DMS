@@ -82,6 +82,9 @@ public class SearchDocumentBean implements Serializable {
 		try {
 			if (selectedDocumentClassId != null) {
 				searchPerformed = false;
+				documentsList.clear();
+				columns.clear();
+				currentUserBean.getResultUUIDList().clear();
 				selectedDocumentClass = documentClassService
 						.findWithPropertiesAndChoiceListItems(selectedDocumentClassId);
 				UIUtils.generatePropertiesInputsForSearch(selectedDocumentClass.getPropertiesList(),

@@ -81,7 +81,7 @@
 		                    <p:selectOneMenu id="documentClassesList" value="#{searchDocumentBean.selectedDocumentClassId}">
 									<f:selectItems value="#{searchDocumentBean.documentClassesList}" var="documentClass"
 									itemLabel="#{documentClass.displayNameArabic}" itemValue="#{documentClass.id}" />									
-						    <p:ajax listener="#{searchDocumentBean.documentClassChanged}" update="propertiesTable" onstart="PF('statusDialog').show();" 
+						    <p:ajax listener="#{searchDocumentBean.documentClassChanged}" update="propertiesTable documentsDiv" onstart="PF('statusDialog').show();" 
 			                   oncomplete="submitCallback(xhr, status, args);"/>
 						    </p:selectOneMenu> 
 					  </p:panelGrid>
@@ -101,7 +101,7 @@
 					  <h:panelGroup layout="block" id="documentsDiv">
 						  <p:outputLabel style="color:red;font-weight: bold;" value="لا يوجد نتائج" rendered="#{searchDocumentBean.searchPerformed and searchDocumentBean.documentsList.size() == 0}"/>
 						  <p:dataTable emptyMessage=""   
-						  id="documentsTable" var="document" rendered="#{searchDocumentBean.renderSearchTable}" 
+						  id="documentsTable" var="document" rendered="#{searchDocumentBean.searchPerformed and searchDocumentBean.documentsList.size() > 0}" 
 						  value="#{searchDocumentBean.documentsList}"  widgetVar="documentsTableWidget" rowIndexVar="index" rowKey="#{document.id}"
 						  rows="10" 
                           paginatorPosition="top"

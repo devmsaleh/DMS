@@ -51,6 +51,8 @@
 	                           <h:outputLabel value="اسم الملف" style="display:block;width:110px;" styleClass="notRequiredLabel"/>
 	                           <h:outputLabel value="#{editDocumentBean.document.originalFileName}"/>
 	                        </h:panelGrid>
+	                        
+	                        <h:outputLabel style="color:red;font-weight:bold" value="لا يوجد خصائص مضافة للتصنيف...يمكنك إضافة خصائص للتصنيف من شاشة إدارة التصنيفات" rendered="#{editDocumentBean.selectedDocumentClass.propertiesList.size() == 0}"/>
 	                        <h:panelGrid id="inputs" columns="2" binding="#{editDocumentBean.propertiesPanelGrid}">
 	                           
 	                        </h:panelGrid>	                     
