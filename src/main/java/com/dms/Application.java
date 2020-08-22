@@ -42,7 +42,8 @@ import com.ocpsoft.pretty.faces.annotation.URLMappings;
 @EnableCaching
 @EnableScheduling
 @URLMappings(mappings = { @URLMapping(id = "default", pattern = "/", viewId = "/login.xhtml"),
-		@URLMapping(id = "login", pattern = "/login", viewId = "/login.xhtml") })
+		@URLMapping(id = "login", pattern = "/login", viewId = "/login.xhtml"),
+		@URLMapping(id = "share", pattern = "/share", viewId = "/share.xhtml") })
 public class Application extends SpringBootServletInitializer {
 
 	private static final Logger log = LoggerFactory.getLogger(Application.class);

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+         <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/images/favicon.ico" />
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>نظام وثائق</title>
+    </h:head>
+
+    <h:body styleClass="login-body" dir="rtl">
+    
+        <form action="#{request.contextPath}/login" method="post">
+        <div id="login-wrapper">
+            <p:graphicImage cache="true" name="images/login-logo.png" library="omega-layout" />
+            
+            <div id="login-container">
+               <h:outputLabel class="title" rendered="#{shareDocumentBean.document == null}" value="الرابط غير صحيح"/>
+                <h:outputLabel class="title" rendered="#{shareDocumentBean.document != null}" value="قام محمود صالح بمشاركة الوثيقة معك"/>
+                <h:panelGrid columns="1" style="margin: 0 auto;" rendered="#{shareDocumentBean.document != null}">
+                   <p:outputLabel value="اسم الوثيقة : #{shareDocumentBean.document.originalFileName}"/>
+                   <p:button value="تحميل" 
+                    href="#{request.contextPath}/viewer?id=#{shareDocumentBean.document.id}&amp;mode=download"
+					onclick="PF('statusDialog').show();setTimeout(function(){ PF('statusDialog').hide()},1000);"
+					icon="fa fa-download">
+				   </p:button>
+                </h:panelGrid>
+                
+            </div> 
+            
+            <div class="login-footer"> جميع الحقوق محفوظة © وثائق</div>
+        </div>
+        
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		    <p:graphicImage value="resources/images/ajaxloadingbar.gif" />
+		</p:dialog>
+		
+        </form>
+        
+        <h:outputStylesheet name="css/layout.css" library="omega-layout" />
+    </h:body>
+
+</html>

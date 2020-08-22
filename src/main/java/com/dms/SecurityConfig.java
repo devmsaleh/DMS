@@ -52,7 +52,8 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 						"/company/*", "/contactUs.xhtml", "/contactUs", "/aboutUs.xhtml", "/activate.xhtml",
 						"/searchCompanies.xhtml", "/findInvoiceStatus.xhtml", "/findInvoiceStatus", "/resources/**",
 						"/saas/**", "/WEB-INF/**", "/template/**", "/faces/fonts/*", "/javax.faces.resource/**",
-						"/login.xhtml", "/login", "/register.xhtml", "/register", "/generateNewCaptcha", "/error")
+						"/login.xhtml", "/share.xhtml", "/share", "/login", "/register.xhtml", "/register",
+						"/generateNewCaptcha", "/error")
 				.permitAll().antMatchers("/manageRegistration.xhtml").hasAuthority("ROLE_ADMIN")
 				.antMatchers("/company/**").hasAnyAuthority("ROLE_COMPANY").anyRequest().fullyAuthenticated().and()
 				.formLogin().loginPage("/login").loginProcessingUrl("/login").permitAll().successHandler(successHandler)

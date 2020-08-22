@@ -71,9 +71,14 @@ public class SearchDocumentBean implements Serializable {
 
 	private boolean searchPerformed;
 
+	private Document selectedDocument;
+
+	private String appURL;
+
 	@PostConstruct
 	public void init() {
 		try {
+			appURL = GeneralUtils.getAppURL();
 			documentClassesList = documentClassRepository.findAll();
 			if (documentClassesList.size() > 0) {
 				selectedDocumentClassId = documentClassesList.get(0).getId();
@@ -90,6 +95,7 @@ public class SearchDocumentBean implements Serializable {
 			if (selectedDocumentClassId != null) {
 				searchPerformed = false;
 				documentsList.clear();
+				selectedDocument = null;
 				columns.clear();
 				currentUserBean.getResultUUIDList().clear();
 				selectedDocumentClass = documentClassService
@@ -108,8 +114,10 @@ public class SearchDocumentBean implements Serializable {
 			if (StringUtils.isBlank(document.getShareUUID())) {
 				document.setShareUUID(UUID.randomUUID().toString());
 				document.setSharedBy(currentUserBean.getUser());
+				document.setSharedByFullName(currentUserBean.getUser().getDisplayName());
 				document.setDateShared(new Date());
 				documentRepository.save(document);
+				selectedDocument = document;
 			}
 		} catch (Exception e) {
 			GeneralUtils.showSystemErrorDialog();
@@ -228,6 +236,22 @@ public class SearchDocumentBean implements Serializable {
 
 	public void setSearchPerformed(boolean searchPerformed) {
 		this.searchPerformed = searchPerformed;
+	}
+
+	public Document getSelectedDocument() {
+		return selectedDocument;
+	}
+
+	public void setSelectedDocument(Document selectedDocument) {
+		this.selectedDocument = selectedDocument;
+	}
+
+	public String getAppURL() {
+		return appURL;
+	}
+
+	public void setAppURL(String appURL) {
+		this.appURL = appURL;
 	}
 
 }

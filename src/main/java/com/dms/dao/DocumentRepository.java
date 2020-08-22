@@ -13,4 +13,6 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 
 	Document findByUuid(String uuid);
 
+	Document findByShareUUID(String shareUUID);
+
 }

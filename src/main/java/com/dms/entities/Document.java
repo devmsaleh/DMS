@@ -56,6 +56,10 @@ public class Document {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateShared;
 
+	private String documentTitle;
+
+	private String sharedByFullName;
+
 	public String getShareUUID() {
 		return shareUUID;
 	}
@@ -182,6 +186,22 @@ public class Document {
 
 	public void setDateLastModified(Date dateLastModified) {
 		this.dateLastModified = dateLastModified;
+	}
+
+	public String getDocumentTitle() {
+		return documentTitle;
+	}
+
+	public void setDocumentTitle(String documentTitle) {
+		this.documentTitle = documentTitle;
+	}
+
+	public String getSharedByFullName() {
+		return sharedByFullName;
+	}
+
+	public void setSharedByFullName(String sharedByFullName) {
+		this.sharedByFullName = sharedByFullName;
 	}
 
 }

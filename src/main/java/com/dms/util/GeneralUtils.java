@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -287,6 +288,12 @@ public class GeneralUtils {
 	public static void showDialogInfo(String message) {
 		PrimeFaces.current().dialog()
 				.showMessageDynamic(new FacesMessage(FacesMessage.SEVERITY_INFO, "تنبيه", message));
+	}
+
+	public static String getAppURL() {
+		HttpServletRequest req = getHttpServletRequest();
+		URI contextUrl = URI.create(req.getRequestURL().toString()).resolve(req.getContextPath());
+		return contextUrl.toString();
 	}
 
 //	public static void createDeepZoomImage(String imagePath) throws IOException {

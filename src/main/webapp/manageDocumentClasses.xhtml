@@ -114,9 +114,18 @@
 									  update=":form:tabs:choiceListItemsTable :form:tabs:newItemName"> 
 									 </p:commandButton>
 								</p:panelGrid>
-							    <p:dataTable styleClass="ui-g-5" emptyMessage="لا يوجد عناصر" id="choiceListItemsTable" var="item" value="#{manageDocumentClassesBean.selectedChoiceList.itemsList}">
-								    
-								    <p:column headerText="اسم العنصر">
+							    <p:dataTable styleClass="ui-g-5" emptyMessage="لا يوجد عناصر" 
+							    id="choiceListItemsTable" var="item" 
+							    value="#{manageDocumentClassesBean.selectedChoiceList.itemsList}"
+							    rows="5" 
+                                paginatorPosition="top"
+                                paginator="#{manageDocumentClassesBean.selectedChoiceList.itemsList.size() > 5}"
+                                paginatorTemplate="{CurrentPageReport} {PageLinks}"
+                                currentPageReportTemplate="{currentPage} من {totalPages}">
+								    <f:facet name="header">
+						              عدد العناصر : #{manageDocumentClassesBean.selectedChoiceList.itemsList.size()}
+						            </f:facet>
+								    <p:column headerText="اسم العنصر" style="text-align:center" filterBy="#{item.value}" filterMatchMode="contains">
 								        <p:outputLabel value="#{item.value}" />
 								    </p:column>						 
 								 

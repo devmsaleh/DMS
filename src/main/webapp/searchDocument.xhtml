@@ -65,6 +65,11 @@
           .thumbnailPanel{
              
           }
+          
+          .actionIcon{
+             width:25px;
+             height:25px;
+          }
         </style>
     
     </ui:define>
@@ -118,17 +123,19 @@
 								</f:facet>
 								<h:outputText rendered="#{column.textOnly}" value="#{document.customPropValues[column.property]}" />
 							    <h:panelGrid id="actionsTable"  columnClasses="noBorder,noBorder,noBorder,noBorder" columns="4" rendered="#{!column.textOnly}">
-							       <p:graphicImage id="img"  name="images/thumbnail.png" library="omega-layout" style="cursor:pointer;width:35px;height:35px;" title="صورة مصغرة" rendered="#{document.mimeType.indexOf('image') != -1}"/>		       
+							       <p:graphicImage id="img"  name="images/thumbnail.png" library="omega-layout" style="cursor:pointer;" styleClass="actionIcon" title="صورة مصغرة" rendered="#{document.mimeType.indexOf('image') != -1}"/>		       
 							       <p:spacer rendered="#{document.mimeType.indexOf('image') == -1}"/>
 							       
-							       <p:button icon="ui-icon-search" rendered="#{document.mimeType.indexOf('image') != -1 or document.mimeType.indexOf('pdf') != -1}" style="width:35px;height:35px" onclick="openImageViewer('#{document.uuid}','#{document.mimeType}');return false;"/>						       							       
+							       <p:button icon="ui-icon-search" rendered="#{document.mimeType.indexOf('image') != -1 or document.mimeType.indexOf('pdf') != -1}" styleClass="actionIcon" onclick="openImageViewer('#{document.uuid}','#{document.mimeType}');return false;"/>						       							       
 							       <p:spacer rendered="#{document.mimeType.indexOf('image') == -1 and document.mimeType.indexOf('pdf') == -1}"/>
 							       
-							       <p:button icon="ui-icon-pencil" style="width:35px;height:35px" onclick="openEditDocument('#{document.uuid}');return false;"/>	
-							       <p:button style="width:35px;height:35px"
+							       <p:button icon="ui-icon-pencil" styleClass="actionIcon" onclick="openEditDocument('#{document.uuid}');return false;"/>	
+							       <p:button styleClass="actionIcon"
 											 href="#{request.contextPath}/viewer?id=#{document.id}&amp;mode=download"
 											 icon="fa fa-download">
 								   </p:button>
+								   
+								   <p:commandButton action="#{searchDocumentBean.shareDocument(document)}" icon="fa fa-share-alt" update=":form:shareDialog" styleClass="actionIcon" oncomplete="PF('shareDialogWidget').show();"/>
 								   
 								   <p:overlayPanel styleClass="thumbnailPanel" id="imgPanel" rendered="#{document.mimeType.indexOf('image') != -1}" 
 								      dynamic="true" my="right center" for="img" showEffect="blind"  hideEffect="explode"
@@ -144,7 +151,17 @@
 					  
                   </p:panelGrid>
                   
-               
+               <p:dialog id="shareDialog" widgetVar="shareDialogWidget"
+						position="center top" style="margin-top:100px;text-align:center"
+						header="مشاركة الوثيقة #{searchDocumentBean.selectedDocument.originalFileName}"
+						dir="rtl"  height="110"
+						resizable="false" modal="true"  draggable="false">
+						<h:panelGrid  columns="1"
+							style="margin:0 auto;font-weight: bold;margin-top:15px;">
+							<p:inputText style="width:500px;text-align: left;" value="#{searchDocumentBean.appURL}/share?shareUUID=#{searchDocumentBean.selectedDocument.shareUUID}" readonly="true"/>
+							<p:commandButton value="إغلاق" type="button" onclick="PF('shareDialogWidget').hide();"/>		
+						</h:panelGrid>
+			   </p:dialog>
                 
                 </h:form>
                 

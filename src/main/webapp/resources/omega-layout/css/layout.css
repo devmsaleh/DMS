@@ -193,7 +193,7 @@
    font-family: 'Droid Arabic Naskh', serif;   
 }
 
-.ui-widget{
+.ui-widget,.ui-panel-titlebar{
 	font-family: 'Droid Arabic Naskh', serif !important; 
 }
 
