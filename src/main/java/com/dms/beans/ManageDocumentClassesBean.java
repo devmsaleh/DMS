@@ -74,8 +74,6 @@ public class ManageDocumentClassesBean implements Serializable {
 
 	private DocumentClass selectedDocumentClass;
 
-	private Long selectedChoiceListId;
-
 	private Long propertyChoiceListId;
 
 	private ChoiceList selectedChoiceList;
@@ -101,9 +99,7 @@ public class ManageDocumentClassesBean implements Serializable {
 			}
 			choiceLists = choiceListRepository.findAll();
 			if (choiceLists.size() > 0) {
-				selectedChoiceListId = choiceLists.get(0).getId();
-				propertyChoiceListId = choiceLists.get(0).getId();
-				choiceListChanged();
+				// selectedChoiceList = choiceLists.get(0);
 			}
 		} catch (Exception e) {
 			log.error("Exception in init ManageDocumentClassesBean", e);
@@ -171,15 +167,6 @@ public class ManageDocumentClassesBean implements Serializable {
 		newDocumentClass = selectedDocumentClass;
 	}
 
-	public void choiceListChanged() {
-		try {
-			selectedChoiceList = documentClassService.findChoiceListWithItems(selectedChoiceListId);
-		} catch (Exception e) {
-			GeneralUtils.showSystemErrorDialog();
-			log.error("Exception in documentClassChanged", e);
-		}
-	}
-
 	public void createNewChoiceList() {
 		try {
 
@@ -202,9 +189,8 @@ public class ManageDocumentClassesBean implements Serializable {
 			choiceListRepository.save(newChoiceList);
 			ChoiceList newChoiceListCopy = SerializationUtils.clone(newChoiceList);
 			choiceLists.add(newChoiceListCopy);
+			selectedChoiceList = newChoiceListCopy;
 			newChoiceList = new ChoiceList();
-			selectedChoiceListId = newChoiceListCopy.getId();
-			choiceListChanged();
 			PrimeFaces.current().executeScript("PF('successDialogWidget').show()");
 		} catch (Exception e) {
 			GeneralUtils.showSystemErrorDialog();
@@ -420,14 +406,6 @@ public class ManageDocumentClassesBean implements Serializable {
 
 	public void setChoiceLists(List<ChoiceList> choiceLists) {
 		this.choiceLists = choiceLists;
-	}
-
-	public Long getSelectedChoiceListId() {
-		return selectedChoiceListId;
-	}
-
-	public void setSelectedChoiceListId(Long selectedChoiceListId) {
-		this.selectedChoiceListId = selectedChoiceListId;
 	}
 
 	public ChoiceList getSelectedChoiceList() {

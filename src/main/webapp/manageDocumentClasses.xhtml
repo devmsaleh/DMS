@@ -78,8 +78,7 @@
                   
                     <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
                     
-                        <p:panel styleClass="card">                  
-		                    <h1>انشاء قائمة</h1>
+                        <p:panel styleClass="card" header="انشاء قائمة">                  
 		                    <p:panelGrid columns="3" styleClass="ui-panelgrid-blank">
 		                        <p:outputLabel value="اسم القائمة"/>
 		                        <p:inputText id="newChoiceListName" value="#{manageDocumentClassesBean.newChoiceList.displayNameArabic}"/>
@@ -91,38 +90,39 @@
 								 </p:commandButton>
 		                        
 			                    <p:outputLabel value="القوائم الحالية"/>
-			                    <p:selectOneMenu id="choiceLists" value="#{manageDocumentClassesBean.selectedChoiceListId}">
+			                    <p:selectOneMenu id="choiceLists" 
+			                    value="#{manageDocumentClassesBean.selectedChoiceList}"
+			                    converter="omnifaces.SelectItemsConverter">
+										<f:selectItem itemLabel="اختر القائمة" itemValue="#{null}"/>
 										<f:selectItems value="#{manageDocumentClassesBean.choiceLists}" var="choiceList"
-										itemLabel="#{choiceList.displayNameArabic}" itemValue="#{choiceList.id}" />									
-							    <p:ajax listener="#{manageDocumentClassesBean.choiceListChanged}" update="choiceListItemsPanel"/>
+										itemLabel="#{choiceList.displayNameArabic}" itemValue="#{choiceList}" />									
+							    <p:ajax onstart="PF('statusDialog').show();" oncomplete="PF('statusDialog').hide();" update="choiceListItemsPanel"/>
 							    </p:selectOneMenu> 
 						    </p:panelGrid>                   
 		                </p:panel>
 	                    
 					    
-					    <p:panel id="choiceListItemsPanel" styleClass="card">                  
-			                <h1>
-			                  <h:outputText rendered="#{manageDocumentClassesBean.selectedChoiceList == null}" value="اضافة عناصر القائمة"/>
-			                  <h:outputText rendered="#{manageDocumentClassesBean.selectedChoiceList != null}" value="اضافة عناصر لقائمة : #{manageDocumentClassesBean.selectedChoiceList.displayNameArabic}" />
-			                </h1>
-						    <p:panelGrid columns="3" styleClass="ui-panelgrid-blank">
-		                        <p:outputLabel value="اسم العنصر"/>
-		                        <p:inputText id="newItemName" value="#{manageDocumentClassesBean.newItemName}"/>
-		                        <p:commandButton 
-								  value="إضافة" action="#{manageDocumentClassesBean.createNewItem}" 			  
-								  onstart="PF('statusDialog').show();" 
-								  oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){}" 
-								  update=":form:tabs:choiceListItemsTable :form:tabs:newItemName"> 
-								 </p:commandButton>
-							</p:panelGrid>
-						    <p:dataTable styleClass="ui-g-5" id="choiceListItemsTable" var="item" value="#{manageDocumentClassesBean.selectedChoiceList.itemsList}">
-							    
-							    <p:column headerText="اسم العنصر">
-							        <p:outputLabel value="#{item.value}" />
-							    </p:column>						 
-							 
-							</p:dataTable>
-						</p:panel>
+					    <h:panelGroup id="choiceListItemsPanel">
+						    <p:panel styleClass="card" header="اضافة عناصر لقائمة : #{manageDocumentClassesBean.selectedChoiceList.displayNameArabic}" rendered="#{manageDocumentClassesBean.selectedChoiceList != null}">                  
+							    <p:panelGrid columns="3" styleClass="ui-panelgrid-blank">
+			                        <p:outputLabel value="اسم العنصر"/>
+			                        <p:inputText id="newItemName" value="#{manageDocumentClassesBean.newItemName}"/>
+			                        <p:commandButton 
+									  value="إضافة" action="#{manageDocumentClassesBean.createNewItem}" 			  
+									  onstart="PF('statusDialog').show();" 
+									  oncomplete="submitCallback(xhr, status, args);if(args.successDialog != null){}" 
+									  update=":form:tabs:choiceListItemsTable :form:tabs:newItemName"> 
+									 </p:commandButton>
+								</p:panelGrid>
+							    <p:dataTable styleClass="ui-g-5" emptyMessage="لا يوجد عناصر" id="choiceListItemsTable" var="item" value="#{manageDocumentClassesBean.selectedChoiceList.itemsList}">
+								    
+								    <p:column headerText="اسم العنصر">
+								        <p:outputLabel value="#{item.value}" />
+								    </p:column>						 
+								 
+								</p:dataTable>
+							</p:panel>
+						</h:panelGroup>
 					    					
 					</p:panelGrid>
 					

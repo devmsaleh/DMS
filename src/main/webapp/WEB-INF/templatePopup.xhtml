@@ -26,12 +26,14 @@
         </style>
         <script>
         
-        $('.hijriDate,.gregDate').on('keydown', function(event){
+        $(document).on('keydown','.hijriDate,.gregDate', function(event) {
 	        var key = event.keyCode || event.charCode;
 	        var isNumber = /^[0-9]$/i.test(event.key);
-	        if(key == 8 || key == 46 || key == 191){
+	        if(key == 8 || key == 9 || key == 46 || key == 191){
 	           isNumber = true;
 	        }
+	        
+	        <!-- 9 is tab -->
 	        <!-- 191 is forward slash -->
 	        <!-- 8,46 is backspace -->						
 		    if(!isNumber) 
@@ -39,7 +41,7 @@
 	             						           
 		});
 		
-		$('.hijriDate,.gregDate').on('keyup', function(event){
+    	$(document).on('keyup','.hijriDate,.gregDate', function(event) {
 	        
 	         var value = $(this).val();
 	         var length = value.length;
@@ -55,7 +57,7 @@
 	           $(this).val(newValue); 					          					           
 	         }     
 		           
-		});
+	});
 		
         function submitCallback(xhr, status, args) {
            PF('statusDialog').hide();

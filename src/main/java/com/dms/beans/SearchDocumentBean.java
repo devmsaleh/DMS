@@ -2,11 +2,14 @@ package com.dms.beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.faces.component.html.HtmlPanelGrid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.dms.dao.DocumentClassRepository;
+import com.dms.dao.DocumentRepository;
 import com.dms.dao.UtilsRepository;
 import com.dms.entities.Document;
 import com.dms.entities.DocumentClass;
@@ -56,6 +60,9 @@ public class SearchDocumentBean implements Serializable {
 	@Autowired
 	private UtilsRepository utilsRepository;
 
+	@Autowired
+	private DocumentRepository documentRepository;
+
 	private boolean renderSearchTable;
 
 	private List<Document> documentsList = new ArrayList<Document>();
@@ -93,6 +100,20 @@ public class SearchDocumentBean implements Serializable {
 		} catch (Exception e) {
 			GeneralUtils.showSystemErrorDialog();
 			log.error("Exception in documentClassChanged", e);
+		}
+	}
+
+	public void shareDocument(Document document) {
+		try {
+			if (StringUtils.isBlank(document.getShareUUID())) {
+				document.setShareUUID(UUID.randomUUID().toString());
+				document.setSharedBy(currentUserBean.getUser());
+				document.setDateShared(new Date());
+				documentRepository.save(document);
+			}
+		} catch (Exception e) {
+			GeneralUtils.showSystemErrorDialog();
+			log.error("Exception in shareDocument", e);
 		}
 	}
 

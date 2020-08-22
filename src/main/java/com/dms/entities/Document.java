@@ -48,6 +48,38 @@ public class Document {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateLastModified;
 
+	private String shareUUID;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	private User sharedBy;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateShared;
+
+	public String getShareUUID() {
+		return shareUUID;
+	}
+
+	public void setShareUUID(String shareUUID) {
+		this.shareUUID = shareUUID;
+	}
+
+	public User getSharedBy() {
+		return sharedBy;
+	}
+
+	public void setSharedBy(User sharedBy) {
+		this.sharedBy = sharedBy;
+	}
+
+	public Date getDateShared() {
+		return dateShared;
+	}
+
+	public void setDateShared(Date dateShared) {
+		this.dateShared = dateShared;
+	}
+
 	public DocumentClass getDocumentClass() {
 		return documentClass;
 	}
