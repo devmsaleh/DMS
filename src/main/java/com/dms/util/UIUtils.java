@@ -652,39 +652,33 @@ public class UIUtils {
 	public static SelectOneMenu createSelectOneMenu(Property property, boolean addEmptyFirstItem,
 			List<Property> properties, HtmlPanelGrid propertiesPanelGrid) {
 
+		System.out.println("######## createSelectOneMenu,property: " + property.getChoiceListItemsList().size()
+				+ ",id: " + property.getId());
 		SelectOneMenu selectOneMenu = null;
 
-		try {
+		selectOneMenu = new SelectOneMenu();
+		selectOneMenu.setStyleClass(InputsStyles.PRIMEFACES_MENU_STYLE_CLASS);
+		selectOneMenu.setId(property.getSymbolicName());
+		selectOneMenu.setFilter(true);
+		selectOneMenu.setFilterMatchMode("contains");
+		List<SelectItem> selectItems = new ArrayList<SelectItem>(property.getChoiceListItemsList().size());
 
-			selectOneMenu = new SelectOneMenu();
-			selectOneMenu.setStyleClass(InputsStyles.PRIMEFACES_MENU_STYLE_CLASS);
-			selectOneMenu.setId(property.getSymbolicName());
-			selectOneMenu.setFilter(true);
-			selectOneMenu.setFilterMatchMode("contains");
-			List<SelectItem> selectItems = new ArrayList<SelectItem>(property.getChoiceListItemsList().size());
+		if (addEmptyFirstItem) {
+			SelectItem selectItemEmpty = new SelectItem("", "اختر من القائمة");
+			selectItems.add(selectItemEmpty);
+		}
 
-			if (addEmptyFirstItem) {
-				SelectItem selectItemEmpty = new SelectItem("", "اختر من القائمة");
-				// selectItemEmpty.setDisabled(true);
-				// selectItemEmpty.setNoSelectionOption(true);
-				selectItems.add(selectItemEmpty);
-			}
+		for (ChoiceListItem choiceListItem : property.getChoiceListItemsList()) {
+			selectItems.add(new SelectItem(choiceListItem.getValue(), choiceListItem.getValue()));
+		}
 
-			for (ChoiceListItem choiceListItem : property.getChoiceListItemsList()) {
-				selectItems.add(new SelectItem(choiceListItem.getValue(), choiceListItem.getValue()));
-			}
+		UISelectItems uiSelectItems = new UISelectItems();
+		uiSelectItems.setValue(selectItems);
+		selectOneMenu.getChildren().add(uiSelectItems);
 
-			UISelectItems uiSelectItems = new UISelectItems();
-			uiSelectItems.setValue(selectItems);
-			selectOneMenu.getChildren().add(uiSelectItems);
+		selectOneMenu.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.CHOICE_LIST);
 
-			selectOneMenu.getAttributes().put(InputsDataTypes.DATA_TYPE_ATTRIBUTE_NAME, InputsDataTypes.CHOICE_LIST);
-
-			if (property.isMainChoiceList()) {
-
-			}
-
-		} catch (Exception e) {
+		if (property.isMainChoiceList()) {
 
 		}
 

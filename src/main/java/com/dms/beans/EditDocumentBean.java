@@ -23,6 +23,7 @@ import com.dms.entities.DocumentClass;
 import com.dms.entities.Property;
 import com.dms.enums.CustomColumnsEnum;
 import com.dms.enums.PropertyTypeEnum;
+import com.dms.service.DocumentClassService;
 import com.dms.util.GeneralUtils;
 import com.dms.util.UIUtils;
 import com.dms.util.ViewerUtils;
@@ -44,6 +45,9 @@ public class EditDocumentBean implements Serializable {
 
 	@Autowired
 	private UtilsRepository utilsRepository;
+
+	@Autowired
+	private DocumentClassService documentClassService;
 
 	private transient HtmlPanelGrid propertiesPanelGrid = new HtmlPanelGrid();
 
@@ -84,7 +88,8 @@ public class EditDocumentBean implements Serializable {
 			GeneralUtils.showDialogError("الوثيقة غير موجودة");
 			return;
 		}
-		selectedDocumentClass = document.getDocumentClass();
+		selectedDocumentClass = documentClassService
+				.findWithPropertiesAndChoiceListItems(document.getDocumentClass().getId());
 		Map<String, Object> customPropertiesValues = document.getCustomPropValues();
 		log.info("########## customPropertiesValues: " + customPropertiesValues.size());
 		setPropertiesValues(selectedDocumentClass, customPropertiesValues);
